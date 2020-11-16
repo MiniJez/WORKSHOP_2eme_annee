@@ -4,6 +4,7 @@ require('dotenv').config()
 
 // IMPORTS
 const { Sensors } = require('../models/sensors');
+const { RawData } = require('../models/rawData');
 
 
 const connectToDb = async () => {
@@ -36,6 +37,45 @@ const getAllSensorsData = async () => {
 }
 
 
+const getAllUserID = async () => {
+    try {
+        await connectToDb();
+        let doc = await Sensors.find({}, 'userID');
+        await disconnectFromDb();
+        return doc;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const getUserInfo = async (userID) => {
+    try {
+        await connectToDb();
+        let doc = await Sensors.find({userID});
+        await disconnectFromDb();
+        return doc;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const getSensorInfos = async (sensorID) => {
+    try {
+        await connectToDb();
+        let doc = await RawData.find({sensorID});
+        await disconnectFromDb();
+        return doc;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 module.exports.connectToDb = connectToDb;
 module.exports.disconnectFromDb = disconnectFromDb;
 module.exports.getAllSensorsData = getAllSensorsData;
+module.exports.getAllUserID = getAllUserID;
+module.exports.getUserInfo = getUserInfo;
+module.exports.getSensorInfos = getSensorInfos;
