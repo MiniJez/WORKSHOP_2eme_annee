@@ -1,12 +1,25 @@
 const express = require('express')
 
+
 // EXPRESS SETUP
 const app = express()
 const port = 3000
 
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
+// IMPORTS
+const { connectToDb, disconnectFromDb, getSensorsData } = require('./functions');
+
+
+app.get('/getSensors', async (req, res) => {
+    try {
+        await connectToDb();
+        let sensors = await getSensorsData();
+        await disconnectFromDb();
+        res.send(sensors);
+    } catch (error) {
+        console.log(error);
+        res.send(error);
+    }
 })
 
 
