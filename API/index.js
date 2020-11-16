@@ -10,11 +10,9 @@ const port = 3000
 const { connectToDb, disconnectFromDb, getSensorsData } = require('./functions');
 
 
-app.get('/getSensors', async (req, res) => {
+app.get('/getAllSensorsData', async (req, res) => {
     try {
-        await connectToDb();
         let sensors = await getSensorsData();
-        await disconnectFromDb();
         res.send(sensors);
     } catch (error) {
         console.log(error);

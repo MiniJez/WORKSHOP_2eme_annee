@@ -3,19 +3,12 @@ require('dotenv').config()
 
 
 // IMPORTS
-const { SensorsSchema } = require('../models/sensors');
+const { Sensors } = require('../models/sensors');
 
 
 const connectToDb = async () => {
     try{
-        console.log('co...')
-        await mongoose.connect(process.env.MONGODB_URL, { dbName: process.env.DB_NAME, useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-            if(err){
-                console.log(err);
-            }else{
-                console.log('Connected');
-            }
-        });
+        await mongoose.connect(process.env.MONGODB_URL, { dbName: process.env.DB_NAME, useNewUrlParser: true, useUnifiedTopology: true });
     }catch(error) {
         console.log(error);
     }
@@ -31,11 +24,11 @@ const disconnectFromDb = async () => {
 }
 
 
-const getSensorsData = async () => {
+const getAllSensorsData = async () => {
     try{
-        const Sensors = mongoose.model('Sensors', SensorsSchema);
-        let doc = await Sensors.find();
-        console.log(doc);
+        await connectToDb();
+        let doc = await Sensors.find({});
+        await disconnectFromDb();
         return doc;
     }catch(error) {
         console.log(error);
@@ -45,4 +38,4 @@ const getSensorsData = async () => {
 
 module.exports.connectToDb = connectToDb;
 module.exports.disconnectFromDb = disconnectFromDb;
-module.exports.getSensorsData = getSensorsData;
+module.exports.getAllSensorsData = getAllSensorsData;
