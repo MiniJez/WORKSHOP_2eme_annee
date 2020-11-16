@@ -1,6 +1,5 @@
 const express = require('express')
 
-
 // EXPRESS SETUP
 const app = express()
 const port = 3000
