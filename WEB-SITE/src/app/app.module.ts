@@ -1,13 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { AgmCoreModule } from '@agm/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
-import key from './API_key.json';
-
-var googleMapKey = key.api_Gmap
 
 @NgModule({
   declarations: [
@@ -15,10 +10,7 @@ var googleMapKey = key.api_Gmap
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    AgmCoreModule.forRoot({
-      apiKey: googleMapKey
-    })
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
