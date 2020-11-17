@@ -32,7 +32,7 @@ def ia_process():
         rawDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getSensors/"+sensor["sensorID"][0])
         print("Statuts : "+str(rawDataResponse.status_code))
         # Vérifie qu'il y a des executions pour ce capteur
-        if rawDataResponse.status_code == 200:
+        if rawDataResponse.text != "[]":
             rawData = json.loads(rawDataResponse.text)
             print("Nombre de RawData pour le capteur : "+ str(len(rawData)))
             rawList = sorted(rawData, key=lambda item: item['time'], reverse=True)
@@ -51,12 +51,14 @@ def ia_process():
             # Récupération des anciennes alertes pour le capteur en question
             alertDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getAlerts/"+sensor["sensorID"][0])
             print("Statuts : "+str(alertDataResponse.status_code))
-            if alertDataResponse.status_code == 200:
+            if alertDataResponse.text != "[]":
                 # S'il y a déjà des alertes en base pour ce capteur, alors on compare les anciennes alertes avec les nouvelles
-                alertData = json.loads(alertDataResponse.text)[0]
+                print("Update des alertes en base de données")
+                alertData = json.loads(alertDataResponse.text)
                 UpdateAlerts(sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
 
-            elif alertDataResponse.status_code == 404:
+            elif alertDataResponse.text == "[]":
+                print("Insertion des alertes en base de données")
                 # S'il n'y a aucune alerte référencée en base de données pour ce capteur, alors on insère en BDD les alertes détectées
                 InsertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
 
