@@ -1,6 +1,7 @@
 from alerts import Alerts
 
 def pm25_execution_process(value):
+    print("***")
     print("Vérification PM 2.5 : " + str(value))
 
     if 12.1 <= float(value) <= 35.4:
@@ -19,4 +20,3 @@ def pm25_execution_process(value):
         print("Attention : "+Alerts.PM_Alerte_5.value)
         return Alerts.PM_Alerte_5.value
     
-    print("***")
