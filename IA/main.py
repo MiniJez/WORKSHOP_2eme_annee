@@ -41,10 +41,64 @@ def ia_process():
             print("Last execution : ", '%s.%03d' % (time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(s)), ms))
 
             # Vérification
-            pm25_execution_process(lastExecution["PM25"])
-            temperature_execution_process(lastExecution["temp"])
-            co2_execution_process(lastExecution["C02"])
-            humidity_execution_process(lastExecution["humidity"])
+            pm25Alert = pm25_execution_process(lastExecution["PM25"])
+            temperatureAlert = temperature_execution_process(lastExecution["temp"])
+            co2Alert = co2_execution_process(lastExecution["C02"])
+            humidityAlert = humidity_execution_process(lastExecution["humidity"])
+
+            # Récupération des alertes pour le capteur en question
+            alertDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getAlerts/"+sensor["sensorID"][0])
+            print("Statuts : "+str(alertDataResponse.status_code))
+            if alertDataResponse.status_code == 200:
+                # S'il y a déjà des alertes en base pour ce capteur, alors on compare les anciennes alertes avec les nouvelles
+                alertData = json.loads(alertDataResponse.text)[0]
+                hasToUpdate = False
+                if alertData["CO2"] != co2Alert:
+                    print("Send notification for CO2")
+                    hasToUpdate = True
+                elif alertData["PM25"] != pm25Alert:
+                    print("Send notification for PM 2.5")
+                    hasToUpdate = True
+                elif alertData["Humidite"] != humidityAlert:
+                    print("Send notification for Humidity")
+                    hasToUpdate = True
+                elif alertData["Temperature"] != temperatureAlert:
+                    print("Send notification for Temperature")
+                    hasToUpdate = True
+
+                # Si les nouvelles alertes sont différentes des précédentes alors fait un update en base de données
+                if hasToUpdate == True:
+                    dataToUpdate = {
+                        "update":{
+                            "CO2": co2Alert,
+                            "PM25": pm25Alert,
+                            "Humidite": humidityAlert,
+                            "Temperature": temperatureAlert
+                        }
+                    }
+                    requests.post("https://eclisson.duckdns.org/ConnectedCity/updateAlerts/"+sensor["sensorID"][0],data=dataToUpdate)
+
+            elif alertDataResponse.status_code == 404:
+                # S'il n'y a aucune alerte référencée en base de données pour ce capteur, alors insère en BDD les alertes détectées
+                if co2Alert != "":
+                    print("Send notification for CO2")
+                elif pm25Alert != "":
+                    print("Send notification for PM 2.5")
+                elif humidityAlert != "":
+                    print("Send notification for Humidity")
+                elif temperatureAlert != "":
+                    print("Send notification for Temperature")
+                dataToInsert = {
+                    "alert":{
+                        "CO2": co2Alert,
+                        "PM25": pm25Alert,
+                        "Humidite": humidityAlert,
+                        "Temperature": temperatureAlert,
+                        "sensorID": sensor["sensorID"][0]
+                    }
+                }
+                requests.post("https://eclisson.duckdns.org/ConnectedCity/insertAlerts", data=dataToInsert)
+
             break
     
     #s.enter(60, 1, ia_process, (sc,))
