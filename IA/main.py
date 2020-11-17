@@ -22,9 +22,9 @@ def ia_process():
     for sensor in sensorsData:
         print("Sensor ID : " + sensor["sensorID"][0])
 
-        # Récupération des executions des capteurs => /getSensor/:id => 062336c2-d39b-42cf-a8bb-1d05de74bd7e
-        print("https://eclisson.duckdns.org/ConnectedCity/getSensor/"+sensor["sensorID"][0])
-        rawDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getSensor/"+sensor["sensorID"][0])
+        # Récupération des executions des capteurs => /getSensors/:id => 062336c2-d39b-42cf-a8bb-1d05de74bd7e
+        print("https://eclisson.duckdns.org/ConnectedCity/getSensors/"+sensor["sensorID"][0])
+        rawDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getSensors/"+sensor["sensorID"][0])
         print(rawDataResponse.status_code)
         if rawDataResponse.status_code == 200:
             rawData = json.loads(rawDataResponse.text)
