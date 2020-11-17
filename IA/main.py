@@ -6,6 +6,7 @@ from pm25 import pm25_execution_process
 from temperature import temperature_execution_process
 from co2 import co2_execution_process
 from humidity import humidity_execution_process
+from alerts import Alerts
 import json
 
 ################ Program ####################
@@ -55,12 +56,12 @@ def ia_process():
                 # S'il y a déjà des alertes en base pour ce capteur, alors on compare les anciennes alertes avec les nouvelles
                 print("Update des alertes en base de données")
                 alertData = json.loads(alertDataResponse.text)
-                UpdateAlerts(sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
+                Alertsd.updateAlerts(sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
 
             elif alertDataResponse.text == "[]":
                 print("Insertion des alertes en base de données")
                 # S'il n'y a aucune alerte référencée en base de données pour ce capteur, alors on insère en BDD les alertes détectées
-                InsertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
+                Alerts.insertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
 
             break
     
@@ -70,56 +71,3 @@ def ia_process():
 #s.run()
 
 ia_process()
-
-###
-#  Function qui va permettre d'ajouter en base de données une ligne d'alerte pour un sensor donné
-###
-def InsertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
-    if co2Alert != "":
-        print("Send notification for CO2")
-    elif pm25Alert != "":
-        print("Send notification for PM 2.5")
-    elif humidityAlert != "":
-        print("Send notification for Humidity")
-    elif temperatureAlert != "":
-        print("Send notification for Temperature")
-    dataToInsert = {
-        "alert":{
-            "CO2": co2Alert,
-            "PM25": pm25Alert,
-            "Humidite": humidityAlert,
-            "Temperature": temperatureAlert,
-            "sensorID": sensor["sensorID"][0]
-        }
-    }
-    requests.post("https://eclisson.duckdns.org/ConnectedCity/insertAlerts", data=dataToInsert)
-
-###
-#  Function qui va permettre de modifier en base de données une ligne d'alerte pour un sensor donné
-###
-def UpdateAlerts(sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
-    hasToUpdate = False
-    if alertData["CO2"] != co2Alert:
-        print("Send notification for CO2")
-        hasToUpdate = True
-    elif alertData["PM25"] != pm25Alert:
-        print("Send notification for PM 2.5")
-        hasToUpdate = True
-    elif alertData["Humidite"] != humidityAlert:
-        print("Send notification for Humidity")
-        hasToUpdate = True
-    elif alertData["Temperature"] != temperatureAlert:
-        print("Send notification for Temperature")
-        hasToUpdate = True
-
-    # Si les nouvelles alertes sont différentes des précédentes alors fait un update en base de données
-    if hasToUpdate == True:
-        dataToUpdate = {
-            "update":{
-                "CO2": co2Alert,
-                "PM25": pm25Alert,
-                "Humidite": humidityAlert,
-                "Temperature": temperatureAlert
-            }
-        }
-        requests.post("https://eclisson.duckdns.org/ConnectedCity/updateAlerts/"+sensor["sensorID"][0],data=dataToUpdate)

@@ -1,6 +1,7 @@
-from enum import Enum
+import requests
 
-class Alerts(Enum):
+
+class Alerts():
     CO2_Alerte_1 = "Aération nécessaire : attention à la somnolence et au manque d'air."
     CO2_Alerte_2 = "Aération nécessaire : attention aux maux de tête, à la somnolence, entraîne une mauvaise concentration, une perte d'attention, une augmentation de la fréquence cardiaque et de légères nausées"
     CO2_Alerte_3 = "Aération vraiment nécessaire, le taux est au dessus de la limite!"
@@ -17,3 +18,57 @@ class Alerts(Enum):
 
     Temperature_Alerte_1 = "Il fait trop chaud : éteignez/baissez votre chauffage ou ouvrez les fenêtres"
     Temperature_Alerte_2 = "Il fait trop froid : isolez vos murs"
+
+    ###
+    #  Function qui va permettre d'ajouter en base de données une ligne d'alerte pour un sensor donné
+    ###
+    def insertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
+        if co2Alert != "":
+            print("Send notification for CO2")
+        elif pm25Alert != "":
+            print("Send notification for PM 2.5")
+        elif humidityAlert != "":
+            print("Send notification for Humidity")
+        elif temperatureAlert != "":
+            print("Send notification for Temperature")
+        dataToInsert = {
+            "alert": {
+                "CO2": co2Alert,
+                "PM25": pm25Alert,
+                "Humidite": humidityAlert,
+                "Temperature": temperatureAlert,
+                "sensorID": sensor["sensorID"][0]
+            }
+        }
+        requests.post("https://eclisson.duckdns.org/ConnectedCity/insertAlerts", data=dataToInsert)
+
+    ###
+    #  Function qui va permettre de modifier en base de données une ligne d'alerte pour un sensor donné
+    ###
+    def updateAlerts(sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
+        hasToUpdate = False
+        if alertData["CO2"] != co2Alert:
+            print("Send notification for CO2")
+            hasToUpdate = True
+        elif alertData["PM25"] != pm25Alert:
+            print("Send notification for PM 2.5")
+            hasToUpdate = True
+        elif alertData["Humidite"] != humidityAlert:
+            print("Send notification for Humidity")
+            hasToUpdate = True
+        elif alertData["Temperature"] != temperatureAlert:
+            print("Send notification for Temperature")
+            hasToUpdate = True
+
+        # Si les nouvelles alertes sont différentes des précédentes alors fait un update en base de données
+        if hasToUpdate == True:
+            dataToUpdate = {
+                "update": {
+                    "CO2": co2Alert,
+                    "PM25": pm25Alert,
+                    "Humidite": humidityAlert,
+                    "Temperature": temperatureAlert
+                }
+            }
+            requests.post("https://eclisson.duckdns.org/ConnectedCity/updateAlerts/" + sensor["sensorID"][0],
+                          data=dataToUpdate)
