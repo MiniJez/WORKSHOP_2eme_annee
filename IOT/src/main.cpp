@@ -1,15 +1,14 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
+#include <PubSubClient.h>
 #include <LiquidCrystal_I2C.h>
 #include <DHTesp.h>
 #include "config.h"
-#ifdef ESP32
-#pragma message(THIS EXAMPLE IS FOR ESP8266 ONLY !)
-#error Select ESP8266 board.
-#endif
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 DHTesp dht;
+WiFiClient espClient;               // create the wifi client
+PubSubClient mqttClient(espClient); // create the mqtt client
 
 void setup()
 {
@@ -18,8 +17,9 @@ void setup()
   lcd.backlight();
   dht.setup(14, DHTesp::DHT11);
 
-  WiFi.begin(ssid, password);// Connect to the network
-  WiFi.hostname(uuid); 
+  WiFi.begin(ssid, password); // Connect to the network
+  WiFi.hostname(uuid);
+  //lcd
   lcd.setCursor(0, 0);
   lcd.print("Connecting to ");
   lcd.setCursor(0, 1);
@@ -38,6 +38,22 @@ void setup()
   lcd.print(WiFi.localIP());
   delay(2000);
   lcd.clear();
+
+  //Mqtt
+  mqttClient.setServer(mqtt_server, 1883);
+
+  // Attempt to connect to the server with the ID "myClientID"
+  if (mqttClient.connect(uuid))
+  {
+    Serial.println("Connection has been established, well done");
+
+    // Establish the subscribe event
+    //	mqttClient.setCallback(subscribeReceive);
+  }
+  else
+  {
+    Serial.println("Looks like the server connection failed...");
+  }
 }
 
 void loop()

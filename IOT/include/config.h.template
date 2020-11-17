@@ -1,3 +1,4 @@
 #define ssid "SSID"
 #define password "PASSWORD"
 #define uuid "XXXXX"
+#define mqtt_server "test.mosquitto.org";
