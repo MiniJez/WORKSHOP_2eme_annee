@@ -1,35 +1,17 @@
-const mongoose = require('mongoose');
 require('dotenv').config()
 
 
 // IMPORTS
 const { Sensors } = require('../models/sensors');
 const { RawData } = require('../models/rawData');
-
-
-const connectToDb = async () => {
-    try{
-        await mongoose.connect(process.env.MONGODB_URL, { dbName: process.env.DB_NAME, useNewUrlParser: true, useUnifiedTopology: true });
-    }catch(error) {
-        console.log(error);
-    }
-}
-
-
-const disconnectFromDb = async () => {
-    try{
-        await mongoose.disconnect();
-    }catch(error) {
-        console.log(error);
-    }
-}
+const { Alert } = require('../models/alert');
 
 
 const getAllSensorsData = async () => {
     try{
-        await connectToDb();
+        console.log("getSensors/");
         let doc = await Sensors.find({});
-        await disconnectFromDb();
+        console.log("done")
         return doc;
     }catch(error) {
         console.log(error);
@@ -39,9 +21,9 @@ const getAllSensorsData = async () => {
 
 const getAllUserID = async () => {
     try {
-        await connectToDb();
+        console.log("getUsers/");
         let doc = await Sensors.find({}, 'userID');
-        await disconnectFromDb();
+        console.log("done");
         return doc;
     } catch (error) {
         console.log(error);
@@ -51,9 +33,9 @@ const getAllUserID = async () => {
 
 const getUserInfo = async (userID) => {
     try {
-        await connectToDb();
+        console.log("getUsers/:id");
         let doc = await Sensors.find({userID});
-        await disconnectFromDb();
+        console.log("done");
         return doc;
     } catch (error) {
         console.log(error);
@@ -63,9 +45,9 @@ const getUserInfo = async (userID) => {
 
 const getSensorInfos = async (sensorID) => {
     try {
-        await connectToDb();
+        console.log("getSensors/:id");
         let doc = await RawData.find({sensorID});
-        await disconnectFromDb();
+        console.log("done");
         return doc;
     } catch (error) {
         console.log(error);
@@ -73,9 +55,44 @@ const getSensorInfos = async (sensorID) => {
 }
 
 
-module.exports.connectToDb = connectToDb;
-module.exports.disconnectFromDb = disconnectFromDb;
+const getAlertInfos = async (id) => {
+    try {
+        console.log("getAlerts/:id");
+        let doc = await Alert.find({sensorID: id});
+        console.log("done");
+        return doc;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const updateAlert = async (id, update) => {
+    try {
+        console.log("updateAlerts/:id");
+        await Alert.findOneAndUpdate({sensorID: id}, update, {useFindAndModify: false});
+        console.log("done");
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const insertAlert = async (alert) => {
+    try {
+        console.log("insertAlerts");
+        await Alert.create(alert);
+        console.log("done");
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 module.exports.getAllSensorsData = getAllSensorsData;
 module.exports.getAllUserID = getAllUserID;
 module.exports.getUserInfo = getUserInfo;
 module.exports.getSensorInfos = getSensorInfos;
+module.exports.getAlertInfos = getAlertInfos;
+module.exports.updateAlert = updateAlert;
+module.exports.insertAlert = insertAlert;
