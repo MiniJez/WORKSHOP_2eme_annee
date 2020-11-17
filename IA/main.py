@@ -28,8 +28,8 @@ def ia_process():
         print("Sensor ID : " + sensor["sensorID"][0])
 
         # Récupération des executions des capteurs => /getSensors/:id => 062336c2-d39b-42cf-a8bb-1d05de74bd7e
-        print("https://eclisson.duckdns.org/ConnectedCity/getSensors/"+sensor["sensorID"][0])
-        rawDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getSensors/"+sensor["sensorID"][0])
+        print("https://eclisson.duckdns.org/ConnectedCity/getRawData/"+sensor["sensorID"][0])
+        rawDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getRawData/"+sensor["sensorID"][0])
         print("Statuts : "+str(rawDataResponse.status_code))
         # Vérifie qu'il y a des executions pour ce capteur
         if rawDataResponse.text != "[]":
