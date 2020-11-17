@@ -2,7 +2,10 @@
 
 import requests
 import sched, time, datetime
-from pm import execution_process
+from pm25 import pm25_execution_process
+from temperature import temperature_execution_process
+from co2 import co2_execution_process
+from humidity import humidity_execution_process
 import json
 
 ################ Program ####################
@@ -38,10 +41,10 @@ def ia_process():
             print("Last execution : ", '%s.%03d' % (time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(s)), ms))
 
             # Vérification
-            execution_process(lastExecution["PM25"])
-            print("Vérification Température")
-            print("Vérification Humidité")
-            print("Vérification CO2")
+            pm25_execution_process(lastExecution["PM25"])
+            temperature_execution_process(lastExecution["temp"])
+            co2_execution_process(lastExecution["C02"])
+            humidity_execution_process(lastExecution["humidity"])
             break
     
     #s.enter(60, 1, ia_process, (sc,))
