@@ -91,11 +91,11 @@ void sendMqtt()
     reconnect();
   }
   // Define message payload
-  String payload = "{\"sensorID\":" + String(uuid) + "," +
-                   "\"temp\":" + String(dht.getTemperature()) + "," +
-                   "\"humidity\":" + String(dht.getHumidity()) + "," +
-                   "\"C02\":" + String(random(5000)) + "," +
-                   "\"PM25\":" + String(random(500)) + "}";
+  String payload = "{\"sensorID\":\"" + String(uuid) + "\"," +
+                   "\"temp\":\"" + String(dht.getTemperature()) + "\"," +
+                   "\"humidity\":\"" + String(dht.getHumidity()) + "\"," +
+                   "\"C02\":\"" + String(random(5000)) + "\"," +
+                   "\"PM25\":\"" + String(random(500)) + "\"}";
 
   //publish the message
   if (mqttClient.publish(mqtt_topic, (char *)payload.c_str()))
@@ -110,7 +110,7 @@ void sendMqtt()
 
 void loop()
 {
-  
+
   lcd.clear();
 
   lcd.setCursor(0, 0);
