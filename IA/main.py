@@ -71,6 +71,9 @@ def ia_process():
 
 ia_process()
 
+###
+#  Function qui va permettre d'ajouter en base de données une ligne d'alerte pour un sensor donné
+###
 def InsertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
     if co2Alert != "":
         print("Send notification for CO2")
@@ -91,6 +94,9 @@ def InsertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
     }
     requests.post("https://eclisson.duckdns.org/ConnectedCity/insertAlerts", data=dataToInsert)
 
+###
+#  Function qui va permettre de modifier en base de données une ligne d'alerte pour un sensor donné
+###
 def UpdateAlerts(sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
     hasToUpdate = False
     if alertData["CO2"] != co2Alert:
