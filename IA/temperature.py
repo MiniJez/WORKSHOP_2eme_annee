@@ -6,13 +6,16 @@ import json
 
 def temperature_median():
     # print("https://eclisson.duckdns.org/ConnectedCity/getUsers")
-    rawDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getRawdata")
+    filter = {
+        "sort": -1,
+        "limit": 10
+    }
+    rawDataResponse = requests.post("https://eclisson.duckdns.org/ConnectedCity/getRawdata", json=filter)
     rawData = json.loads(rawDataResponse.text)
     # print("Nombre de users : " + str(len(usersData)))
 
     temp = 0
     for raw in rawData:
-        print(raw)
         # print("User ID : " + users["userID"])
         temp = temp + float(raw["temp"])
         break
