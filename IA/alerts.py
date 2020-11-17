@@ -1,4 +1,5 @@
 import requests
+import json
 
 
 class Alerts():
@@ -22,7 +23,7 @@ class Alerts():
     ###
     #  Function qui va permettre d'ajouter en base de données une ligne d'alerte pour un sensor donné
     ###
-    def insertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
+    def insertAlerts(self, sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
         if co2Alert != "":
             print("Send notification for CO2")
         elif pm25Alert != "":
@@ -40,12 +41,12 @@ class Alerts():
                 "sensorID": sensor["sensorID"][0]
             }
         }
-        requests.post("https://eclisson.duckdns.org/ConnectedCity/insertAlerts", data=dataToInsert)
+        requests.post("https://eclisson.duckdns.org/ConnectedCity/insertAlerts", data=json.dumps(dataToInsert))
 
     ###
     #  Function qui va permettre de modifier en base de données une ligne d'alerte pour un sensor donné
     ###
-    def updateAlerts(sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
+    def updateAlerts(self, sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
         hasToUpdate = False
         if alertData["CO2"] != co2Alert:
             print("Send notification for CO2")
@@ -71,4 +72,4 @@ class Alerts():
                 }
             }
             requests.post("https://eclisson.duckdns.org/ConnectedCity/updateAlerts/" + sensor["sensorID"][0],
-                          data=dataToUpdate)
+                          data=json.dumps(dataToUpdate))

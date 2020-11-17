@@ -56,7 +56,7 @@ def ia_process():
                 # S'il y a déjà des alertes en base pour ce capteur, alors on compare les anciennes alertes avec les nouvelles
                 print("Update des alertes en base de données")
                 alertData = json.loads(alertDataResponse.text)
-                Alertsd.updateAlerts(sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
+                Alerts.updateAlerts(sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
 
             elif alertDataResponse.text == "[]":
                 print("Insertion des alertes en base de données")
