@@ -2,7 +2,6 @@ from alerts import Alerts
 
 def co2_execution_process(value):
     print("Vérification CO2 : " + str(value))
-    print("***")
 
     if 1000 <= float(value) <= 2000:
         print(Alerts.CO2_Alerte_1.value)
@@ -16,3 +15,5 @@ def co2_execution_process(value):
     elif float(value) <= 40000:
         print(Alerts.CO2_Alerte_4.value)
         return Alerts.CO2_Alerte_4.value
+        
+    print("***")
