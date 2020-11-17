@@ -72,6 +72,19 @@ const getSensorInfos = async (sensorID) => {
 }
 
 
+const getAlertInfosSort = async (sort) => {
+    try {
+        console.log(sort)
+        console.log("getAlerts/");
+        let doc = await Alert.find(sort);
+        console.log("done");
+        return doc;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 const getAlertInfos = async (id) => {
     try {
         console.log("getAlerts/:id");
@@ -97,7 +110,7 @@ const updateAlert = async (id, update) => {
 
 const insertAlert = async (alert) => {
     try {
-        console.log("insertAlerts");
+        console.log("insertAlerts/");
         await Alert.create(alert);
         console.log("done");
     } catch (error) {
@@ -108,9 +121,11 @@ const insertAlert = async (alert) => {
 
 const getStats = async () => {
     try {
+        console.log("getStats/");
         let rawDataCount = await RawData.estimatedDocumentCount();
         let sensorsCount = await Sensors.estimatedDocumentCount();
         let alertsCount = await Alert.estimatedDocumentCount();
+        console.log("done");
         return({rawDataCount, sensorsCount, alertsCount});
     } catch (error) {
         console.log(error);
@@ -127,3 +142,4 @@ module.exports.updateAlert = updateAlert;
 module.exports.insertAlert = insertAlert;
 module.exports.getRawData = getRawData;
 module.exports.getStats = getStats;
+module.exports.getAlertInfosSort = getAlertInfosSort;
