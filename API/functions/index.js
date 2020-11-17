@@ -8,12 +8,12 @@ const { Alert } = require('../models/alert');
 
 
 const getAllSensorsData = async () => {
-    try{
+    try {
         console.log("getSensors/");
         let doc = await Sensors.find({});
         console.log("done")
         return doc;
-    }catch(error) {
+    } catch (error) {
         console.log(error);
     }
 }
@@ -34,7 +34,7 @@ const getAllUserID = async () => {
 const getUserInfo = async (userID) => {
     try {
         console.log("getUsers/:id");
-        let doc = await Sensors.find({userID});
+        let doc = await Sensors.find({ userID });
         console.log("done");
         return doc;
     } catch (error) {
@@ -47,9 +47,9 @@ const getRawData = async (limit = null, sort = null) => {
     try {
         console.log("getRawData/");
         let doc;
-        if(limit, sort) {
-            doc = await RawData.find({}).sort({_id: sort}).limit(limit);;
-        }else {
+        if (limit, sort) {
+            doc = await RawData.find({}).sort({ time: sort }).limit(limit);;
+        } else {
             doc = await RawData.find({});
         }
         console.log("done");
@@ -63,7 +63,7 @@ const getRawData = async (limit = null, sort = null) => {
 const getSensorInfos = async (sensorID) => {
     try {
         console.log("getSensors/:id");
-        let doc = await RawData.find({sensorID});
+        let doc = await RawData.find({ sensorID });
         console.log("done");
         return doc;
     } catch (error) {
@@ -73,12 +73,24 @@ const getSensorInfos = async (sensorID) => {
 
 
 const getAlertInfosSort = async (sort) => {
+    const [entries] = Object.entries(sort)
     try {
-        console.log(sort)
-        console.log("getAlerts/");
-        let doc = await Alert.find(sort);
-        console.log("done");
-        return doc;
+        const docs = await Alert.aggregate([
+            {
+                $match: {
+                    [entries[0]]: entries[1]
+                }
+            },
+            {
+                $lookup: {
+                    from: 'RawData',
+                    localField: 'SensorID',
+                    foreignField: 'sensorID',
+                    as: 'RawData'
+                }
+            }
+        ])
+        return (docs)
     } catch (error) {
         console.log(error);
     }
@@ -88,7 +100,7 @@ const getAlertInfosSort = async (sort) => {
 const getAlertInfos = async (id) => {
     try {
         console.log("getAlerts/:id");
-        let doc = await Alert.find({sensorID: id});
+        let doc = await Alert.find({SensorID: id});
         console.log("done");
         return doc;
     } catch (error) {
@@ -100,7 +112,7 @@ const getAlertInfos = async (id) => {
 const updateAlert = async (id, update) => {
     try {
         console.log("updateAlerts/:id");
-        await Alert.findOneAndUpdate({sensorID: id}, update, {useFindAndModify: false});
+        await Alert.findOneAndUpdate({ sensorID: id }, update, { useFindAndModify: false });
         console.log("done");
     } catch (error) {
         console.log(error);
@@ -126,7 +138,7 @@ const getStats = async () => {
         let sensorsCount = await Sensors.estimatedDocumentCount();
         let alertsCount = await Alert.estimatedDocumentCount();
         console.log("done");
-        return({rawDataCount, sensorsCount, alertsCount});
+        return ({ rawDataCount, sensorsCount, alertsCount });
     } catch (error) {
         console.log(error);
     }
