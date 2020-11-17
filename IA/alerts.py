@@ -41,10 +41,11 @@ class Alerts():
                 "PM25": pm25Alert,
                 "Humidite": humidityAlert,
                 "Temperature": temperatureAlert,
-                "sensorID": sensor["sensorID"][0]
+                "SensorID": sensor["sensorID"][0]
             }
         }
-        requests.post("https://eclisson.duckdns.org/ConnectedCity/insertAlerts", data=json.dumps(dataToInsert))
+        print("Data to insert : "+json.dumps(dataToInsert))
+        requests.post("https://eclisson.duckdns.org/ConnectedCity/insertAlerts", json=dataToInsert)
 
     ###
     #  Function qui va permettre de modifier en base de données une ligne d'alerte pour un sensor donné
@@ -74,5 +75,6 @@ class Alerts():
                     "Temperature": temperatureAlert
                 }
             }
+            print("Data to update : "+str(dataToUpdate))
             requests.post("https://eclisson.duckdns.org/ConnectedCity/updateAlerts/" + sensor["sensorID"][0],
-                          data=json.dumps(dataToUpdate))
+                          json=dataToUpdate)
