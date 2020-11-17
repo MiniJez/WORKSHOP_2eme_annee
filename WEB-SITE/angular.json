@@ -34,7 +34,9 @@
               "./node_modules/leaflet/dist/leaflet.css",
               "src/styles.css"
             ],
-            "scripts": ["./node_modules/leaflet/dist/leaflet.js"]
+            "scripts": [
+              "./node_modules/leaflet/dist/leaflet.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -128,5 +130,8 @@
       }
     }
   },
-  "defaultProject": "WEB-SITE"
+  "defaultProject": "WEB-SITE",
+  "cli": {
+    "analytics": "076ddab1-bf5c-41ed-8dfb-c1ca2eef338a"
+  }
 }
