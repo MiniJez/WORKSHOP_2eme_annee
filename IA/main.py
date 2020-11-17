@@ -50,18 +50,19 @@ def ia_process():
             humidityAlert = humidity_execution_process(lastExecution["humidity"])
 
             # Récupération des anciennes alertes pour le capteur en question
+            AlertClass = Alerts()
             alertDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getAlerts/"+sensor["sensorID"][0])
             print("Statuts : "+str(alertDataResponse.status_code))
             if alertDataResponse.text != "[]":
                 # S'il y a déjà des alertes en base pour ce capteur, alors on compare les anciennes alertes avec les nouvelles
                 print("Update des alertes en base de données")
                 alertData = json.loads(alertDataResponse.text)
-                Alerts.updateAlerts(sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
+                AlertClass.updateAlerts(sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
 
             elif alertDataResponse.text == "[]":
                 print("Insertion des alertes en base de données")
                 # S'il n'y a aucune alerte référencée en base de données pour ce capteur, alors on insère en BDD les alertes détectées
-                Alerts.insertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
+                AlertClass.insertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
 
             break
     

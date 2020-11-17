@@ -3,6 +3,9 @@ import json
 
 
 class Alerts():
+    def __init__(self):
+      self.attribut = 'value'
+
     CO2_Alerte_1 = "Aération nécessaire : attention à la somnolence et au manque d'air."
     CO2_Alerte_2 = "Aération nécessaire : attention aux maux de tête, à la somnolence, entraîne une mauvaise concentration, une perte d'attention, une augmentation de la fréquence cardiaque et de légères nausées"
     CO2_Alerte_3 = "Aération vraiment nécessaire, le taux est au dessus de la limite!"
