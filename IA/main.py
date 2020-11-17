@@ -57,7 +57,7 @@ def ia_process():
                 # S'il n'y a aucune alerte référencée en base de données pour ce capteur, alors on insère en BDD les alertes détectées
                 AlertClass.insertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
 
-    s.enter(600, 1, ia_process, (sc,))
+    s.enter(600, 1, ia_process, ())
 
 s.enter(600, 1, ia_process, (s,))
 s.run()
