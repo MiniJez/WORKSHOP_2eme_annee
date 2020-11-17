@@ -106,6 +106,18 @@ const insertAlert = async (alert) => {
 }
 
 
+const getStats = async () => {
+    try {
+        let rawDataCount = await RawData.estimatedDocumentCount();
+        let sensorsCount = await Sensors.estimatedDocumentCount();
+        let alertsCount = await Alert.estimatedDocumentCount();
+        return({rawDataCount, sensorsCount, alertsCount});
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 module.exports.getAllSensorsData = getAllSensorsData;
 module.exports.getAllUserID = getAllUserID;
 module.exports.getUserInfo = getUserInfo;
@@ -114,3 +126,4 @@ module.exports.getAlertInfos = getAlertInfos;
 module.exports.updateAlert = updateAlert;
 module.exports.insertAlert = insertAlert;
 module.exports.getRawData = getRawData;
+module.exports.getStats = getStats;
