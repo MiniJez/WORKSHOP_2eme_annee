@@ -15,8 +15,9 @@ s = sched.scheduler(time.time, time.sleep)
 def ia_process():
 
     # Récupération des capteurs => /getSensors
-    sensorsDataJson = requests.get("https://eclisson.duckdns.org/ConnectedCity/getSensors").text
-    sensorsData = json.loads(sensorsDataJson)
+    print("https://eclisson.duckdns.org/ConnectedCity/getSensors")
+    sensorsDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getSensors")
+    sensorsData = json.loads(sensorsDataResponse.text)
     print("Nombre de capteurs : "+ str(len(sensorsData)))
 
     for sensor in sensorsData:
@@ -25,7 +26,7 @@ def ia_process():
         # Récupération des executions des capteurs => /getSensors/:id => 062336c2-d39b-42cf-a8bb-1d05de74bd7e
         print("https://eclisson.duckdns.org/ConnectedCity/getSensors/"+sensor["sensorID"][0])
         rawDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getSensors/"+sensor["sensorID"][0])
-        print(rawDataResponse.status_code)
+        print("Statuts : "+str(rawDataResponse.status_code))
         if rawDataResponse.status_code == 200:
             rawData = json.loads(rawDataResponse.text)
             print("Nombre de RawData pour le capteur : "+ str(len(rawData)))
@@ -36,7 +37,7 @@ def ia_process():
             s, ms = divmod(int(lastExecution["time"]), 1000)
             print("Last execution : ", '%s.%03d' % (time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(s)), ms))
 
-            # # Vérification
+            # Vérification
             execution_process(lastExecution["PM25"])
             print("Vérification Température")
             print("Vérification Humidité")
