@@ -1,9 +1,15 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <LiquidCrystal_I2C.h>
+#include <DHTesp.h>
 #include "config.h"
+#ifdef ESP32
+#pragma message(THIS EXAMPLE IS FOR ESP8266 ONLY !)
+#error Select ESP8266 board.
+#endif
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
+DHTesp dht;
 
 void setup()
 {
@@ -39,9 +45,28 @@ void setup()
   lcd.print("Arduino LCM IIC 2004");
   lcd.setCursor(2, 3);
   lcd.print("Power By Ec-yuan!");
+
+  Serial.println("Status\tHumidity (%)\tTemperature (C)\t(F)\tHeatIndex (C)\t(F)");
+  dht.setup(14, DHTesp::DHT11);
 }
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
+  delay(dht.getMinimumSamplingPeriod());
+
+  float humidity = dht.getHumidity();
+  float temperature = dht.getTemperature();
+
+  Serial.print(dht.getStatusString());
+  Serial.print("\t");
+  Serial.print(humidity, 1);
+  Serial.print("\t\t");
+  Serial.print(temperature, 1);
+  Serial.print("\t\t");
+  Serial.print(dht.toFahrenheit(temperature), 1);
+  Serial.print("\t\t");
+  Serial.print(dht.computeHeatIndex(temperature, humidity, false), 1);
+  Serial.print("\t\t");
+  Serial.println(dht.computeHeatIndex(dht.toFahrenheit(temperature), humidity, true), 1);
+  delay(1000);
 }
