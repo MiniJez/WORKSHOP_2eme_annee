@@ -37,29 +37,34 @@ export class AppComponent implements OnInit {
     // all markers init
     const markers = L.featureGroup();
 
+    // init cluster button
+    const clusterbutton = L.easyButton('fa-dot-circle', (btn, mMap) => {
+      markers.removeFrom(mMap);
+      cluster.addTo(mMap);
+    }, 'Cluster mode');
 
+    // // init pin mode button
+    // const pinbutton = L.easyButton('fa-map-pin', (btn, mMap) => {
+    //   cluster.removeFrom(mMap);
+    //   markers.addTo(mMap);
+    // }, 'Pin mode');
+
+    clusterbutton.addTo(map);
+    // pinbutton.addTo(map)
+    
     // api call
-    // this.http.get<any>(`${environment.NewApiAddress}/map`).subscribe(Response => {
-    //   Response.forEach(element => {
-    //     const marker = L.marker([element.latitude, element.longitude])
-    //       .bindPopup(`
-    //         <p>coucou</p>
-    //       `);
-    //     // markers.addLayer(marker);
-    //     cluster.addLayer(marker);
-    //   });
-    // });
-    for (let i = 0; i < 10000; i++) {
-      const marker = L.marker([Math.random() * 360, Math.random() * 360])
+    this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`).subscribe(Response => {
+      Response.forEach((element: { lat: number; lon: number; }) => {
+        const marker = L.marker([element.lat, element.lon])
           .bindPopup(`
-            <p>coucou</p> 
+            <p>coucou</p>
           `);
         // markers.addLayer(marker);
         cluster.addLayer(marker);
-    }
+      });
+    });
 
     // add the clusters
     map.addLayer(cluster);
-
   }
 }

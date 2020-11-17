@@ -19,6 +19,8 @@
     "@angular/platform-browser": "~11.0.0",
     "@angular/platform-browser-dynamic": "~11.0.0",
     "@angular/router": "~11.0.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.32",
+    "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@syncfusion/ej2-angular-maps": "^18.3.47",
     "@types/leaflet.markercluster": "^1.4.3",
     "leaflet": "^1.7.1",
