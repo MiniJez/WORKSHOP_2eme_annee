@@ -10,6 +10,41 @@ DHTesp dht;
 WiFiClient espClient;               // create the wifi client
 PubSubClient mqttClient(espClient); // create the mqtt client
 
+void callback(char *topic, byte *payload, unsigned int length)
+{
+  Serial.println("Message arrived !");
+  Serial.println("Topic :" + String(topic));
+  Serial.print("Message :");
+  for (int i = 0; i < length; i++)
+  {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+}
+
+//Mqtt reconnect function
+void reconnect()
+{
+  // Loop until we're connected
+  while (!mqttClient.connected())
+  {
+    Serial.println("Attempting MQTT connection...");
+    // Attempt to connect
+    if (mqttClient.connect(uuid))
+    {
+      Serial.println("connected");
+    }
+    else
+    {
+      Serial.print("failed, rc=");
+      Serial.print(mqttClient.state());
+      Serial.println("try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -41,63 +76,31 @@ void setup()
 
   //Mqtt
   mqttClient.setServer(mqtt_server, 1883);
+  mqttClient.setCallback(callback);
+  reconnect();
+  mqttClient.subscribe(mqtt_topic_device);
 
-  // Attempt to connect to the server with the ID "myClientID"
-  if (mqttClient.connect(uuid))
-  {
-    Serial.println("Connection has been established, well done");
-
-    // Establish the subscribe event
-    //	mqttClient.setCallback(subscribeReceive);
-  }
-  else
-  {
-    Serial.println("Looks like the server connection failed...");
-  }
-}
-
-//Mqtt reconnect function
-void reconnect()
-{
-  // Loop until we're reconnected
-  while (!mqttClient.connected())
-  {
-    Serial.print("Attempting MQTT connection...");
-    // Attempt to connect
-    if (mqttClient.connect("ESP8266 Client"))
-    {
-      Serial.println("connected");
-      // ... and subscribe to topic
-      mqttClient.subscribe("testTopic");
-    }
-    else
-    {
-      Serial.print("failed, rc=");
-      Serial.print(mqttClient.state());
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
-    }
-  }
+  delay(1500);
 }
 
 //mqtt send message
 void sendMqtt()
 {
-  if (!mqttClient.connected())
+  if (!mqttClient.connected()) // if the device is disconnected from mqtt
   {
     reconnect();
   }
-  // Define
-  String payload = "coucou"; /* "{\"t_in\":" + String(temperature, 2) + "," +
-                   "\"p\":" + String(pressure, 2) + "," +
-                   "\"h_in\":" + String(humidity, 2) + "}";
-*/
+  // Define message payload
+  String payload = "{\"sensorID\":" + String(uuid) + "," +
+                   "\"temp\":" + String(dht.getTemperature()) + "," +
+                   "\"humidity\":" + String(dht.getHumidity()) + "," +
+                   "\"C02\":" + String(random(5000)) + "," +
+                   "\"PM25\":" + String(random(500)) + "}";
 
   //publish the message
-  if (mqttClient.publish(uuid, (char *)payload.c_str()))
+  if (mqttClient.publish(mqtt_topic, (char *)payload.c_str()))
   {
-    Serial.println("Publish message success");
+    Serial.println("Publish message success :)");
   }
   else
   {
@@ -107,19 +110,16 @@ void sendMqtt()
 
 void loop()
 {
-  mqttClient.loop();
+  
   lcd.clear();
-
-  float humidity = dht.getHumidity();
-  float temperature = dht.getTemperature();
 
   lcd.setCursor(0, 0);
   lcd.print("Temp:");
-  lcd.print(temperature, 1);
+  lcd.print(dht.getTemperature(), 1);
 
   lcd.setCursor(0, 1);
   lcd.print("Humi:");
-  lcd.print(humidity, 1);
+  lcd.print(dht.getHumidity(), 1);
 
   lcd.setCursor(0, 2);
   lcd.print("C02:");
@@ -129,9 +129,8 @@ void loop()
   lcd.print("PM2.5:");
   lcd.print(random(500));
 
-  Serial.println(dht.getStatusString());
-  Serial.println(humidity);
-  Serial.println(temperature);
+  // Serial.println(String(dht.getStatusString()) + " " + String(temperature, 1) + "°C " + String(humidity, 1) + "%");
   sendMqtt();
-  delay(dht.getMinimumSamplingPeriod() + 9000);
+  mqttClient.loop();
+  delay(dht.getMinimumSamplingPeriod() + 1100);
 }
