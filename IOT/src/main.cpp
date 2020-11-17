@@ -56,8 +56,58 @@ void setup()
   }
 }
 
+//Mqtt reconnect function
+void reconnect()
+{
+  // Loop until we're reconnected
+  while (!mqttClient.connected())
+  {
+    Serial.print("Attempting MQTT connection...");
+    // Attempt to connect
+    if (mqttClient.connect("ESP8266 Client"))
+    {
+      Serial.println("connected");
+      // ... and subscribe to topic
+      mqttClient.subscribe("testTopic");
+    }
+    else
+    {
+      Serial.print("failed, rc=");
+      Serial.print(mqttClient.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
+
+//mqtt send message
+void sendMqtt()
+{
+  if (!mqttClient.connected())
+  {
+    reconnect();
+  }
+  // Define
+  String payload = "coucou"; /* "{\"t_in\":" + String(temperature, 2) + "," +
+                   "\"p\":" + String(pressure, 2) + "," +
+                   "\"h_in\":" + String(humidity, 2) + "}";
+*/
+
+  //publish the message
+  if (mqttClient.publish(uuid, (char *)payload.c_str()))
+  {
+    Serial.println("Publish message success");
+  }
+  else
+  {
+    Serial.println("Could not send message :(");
+  }
+}
+
 void loop()
 {
+  mqttClient.loop();
   lcd.clear();
 
   float humidity = dht.getHumidity();
@@ -82,5 +132,6 @@ void loop()
   Serial.println(dht.getStatusString());
   Serial.println(humidity);
   Serial.println(temperature);
+  sendMqtt();
   delay(dht.getMinimumSamplingPeriod() + 9000);
 }
