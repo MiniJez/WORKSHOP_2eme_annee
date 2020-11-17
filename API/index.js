@@ -13,7 +13,7 @@ app.use(cors());
 
 
 // IMPORTS
-const { getAllSensorsData, getAllUserID, getUserInfo, getSensorInfos, getAlertInfos, updateAlert, insertAlert } = require('./functions');
+const { getAllSensorsData, getAllUserID, getUserInfo, getSensorInfos, getAlertInfos, updateAlert, insertAlert, getRawData } = require('./functions');
 const { handleConnection } = require('./connection');
 handleConnection();
 
@@ -28,7 +28,7 @@ app.get('/getSensors', async (req, res) => {
     }
 })
 
-app.get('/getUsers', async (req, res) => {
+app.get('/getSensorsUserID', async (req, res) => {
     try {
         let usersID = await getAllUserID();
         res.send(usersID);
@@ -38,7 +38,29 @@ app.get('/getUsers', async (req, res) => {
     }
 })
 
-app.get('/getUsers/:id', async (req, res) => {
+app.get('/getRawData', async (req, res) => {
+    try {
+        let rawData = await getRawData();
+        res.send(rawData);
+    } catch (error) {
+        console.log(error);
+        res.send(error);
+    }
+})
+
+app.post('/getRawData', async (req, res) => {
+    const { limit, sort } = req.body;
+    console.log(limit, sort)
+    try {
+        let rawData = await getRawData(limit, sort);
+        res.send(rawData);
+    } catch (error) {
+        console.log(error);
+        res.send(error);
+    }
+})
+
+app.get('/getSensors/:id', async (req, res) => {
     const { id } = req.params;
     try {
         let userInfos = await getUserInfo(id);
@@ -49,7 +71,7 @@ app.get('/getUsers/:id', async (req, res) => {
     }
 })
 
-app.get('/getSensors/:id', async (req, res) => {
+app.get('/getRawData/:id', async (req, res) => {
     const { id } = req.params;
     try {
         let sensorInfos = await getSensorInfos(id);

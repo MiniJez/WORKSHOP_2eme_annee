@@ -21,7 +21,7 @@ const getAllSensorsData = async () => {
 
 const getAllUserID = async () => {
     try {
-        console.log("getUsers/");
+        console.log("getSensorsUserID/");
         let doc = await Sensors.find({}, 'userID');
         console.log("done");
         return doc;
@@ -35,6 +35,23 @@ const getUserInfo = async (userID) => {
     try {
         console.log("getUsers/:id");
         let doc = await Sensors.find({userID});
+        console.log("done");
+        return doc;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const getRawData = async (limit = null, sort = null) => {
+    try {
+        console.log("getRawData/");
+        let doc;
+        if(limit, sort) {
+            doc = await RawData.find({}).sort({_id: sort}).limit(limit);;
+        }else {
+            doc = await RawData.find({});
+        }
         console.log("done");
         return doc;
     } catch (error) {
@@ -96,3 +113,4 @@ module.exports.getSensorInfos = getSensorInfos;
 module.exports.getAlertInfos = getAlertInfos;
 module.exports.updateAlert = updateAlert;
 module.exports.insertAlert = insertAlert;
+module.exports.getRawData = getRawData;
