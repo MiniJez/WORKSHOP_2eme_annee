@@ -1,0 +1,18 @@
+{
+    "_id" : "", // id unique
+    "sensorID" : "", // id of the sensor
+    "time" : "", // valeur sois en ISO sois en seconds depuis l'an 1900
+    "temp" : "", // float etren -100 et + 100 (en C°)
+    "humidity" :"", // float entre 0 et 100 (en %)
+    "C02" : "", // entier entre 0 et 5000
+    "PM25" : ""// float entre 0 et 500 
+}
+
+{
+    "_id" : "", // id unique
+    "lat" : "", // float de latitude
+    "lon" : "", // float de longitude
+    "address" : "", // adresse complete
+    "userID": "", // UUIDV4
+    "sensorID": [] // List permet de faire le lien avec l'autre table 
+}

@@ -1,0 +1,356 @@
+[
+    {
+        "id": "6fb474a3.b7a534",
+        "type": "tab",
+        "label": "Workshop",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "69d642f8.3e84bc",
+        "type": "mongodb out",
+        "z": "6fb474a3.b7a534",
+        "mongodb": "abcb5afa.5257b8",
+        "name": "",
+        "collection": "RawData",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "insert",
+        "x": 1040,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "ee6f587f.ea68a",
+        "type": "inject",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "26a0f24b.b69f1e",
+                "a49be4e0.faab2",
+                "60a5118f.3a0ca8",
+                "49262573.a98f54",
+                "56e9e7b6.345948"
+            ]
+        ]
+    },
+    {
+        "id": "26a0f24b.b69f1e",
+        "type": "random",
+        "z": "6fb474a3.b7a534",
+        "name": "Temperature",
+        "low": "-100",
+        "high": "100",
+        "inte": "false",
+        "property": "payload",
+        "x": 350,
+        "y": 220,
+        "wires": [
+            [
+                "19bc5153.1ee33f"
+            ]
+        ]
+    },
+    {
+        "id": "a49be4e0.faab2",
+        "type": "random",
+        "z": "6fb474a3.b7a534",
+        "name": "Humidity",
+        "low": "0",
+        "high": "100",
+        "inte": "false",
+        "property": "payload",
+        "x": 340,
+        "y": 260,
+        "wires": [
+            [
+                "19bc5153.1ee33f"
+            ]
+        ]
+    },
+    {
+        "id": "60a5118f.3a0ca8",
+        "type": "random",
+        "z": "6fb474a3.b7a534",
+        "name": "C02",
+        "low": "0",
+        "high": "5000",
+        "inte": "true",
+        "property": "payload",
+        "x": 330,
+        "y": 300,
+        "wires": [
+            [
+                "19bc5153.1ee33f"
+            ]
+        ]
+    },
+    {
+        "id": "49262573.a98f54",
+        "type": "random",
+        "z": "6fb474a3.b7a534",
+        "name": "PM2.5",
+        "low": "0",
+        "high": "500",
+        "inte": "true",
+        "property": "payload",
+        "x": 330,
+        "y": 340,
+        "wires": [
+            [
+                "19bc5153.1ee33f"
+            ]
+        ]
+    },
+    {
+        "id": "816cc55b.9dce6",
+        "type": "debug",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "c9f9c99e.7c141",
+        "type": "function",
+        "z": "6fb474a3.b7a534",
+        "name": "Format Data",
+        "func": "var currentdate = new Date().getTime();\nvar pl = msg.payload;\nconsole.log(msg)\n    var newMsg = {\n        payload: {\n            \"sensorID\" : pl[4],\n            \"time\" : currentdate, \n            \"temp\" :  pl[0],\n            \"humidity\" :  pl[1],\n            \"C02\" :  pl[2],\n            \"PM25\":pl[3],\n        }\n    };\nconsole.log(newMsg);\nreturn newMsg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 710,
+        "y": 280,
+        "wires": [
+            [
+                "816cc55b.9dce6",
+                "69d642f8.3e84bc"
+            ]
+        ]
+    },
+    {
+        "id": "19bc5153.1ee33f",
+        "type": "join",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "5",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 550,
+        "y": 280,
+        "wires": [
+            [
+                "c9f9c99e.7c141"
+            ]
+        ]
+    },
+    {
+        "id": "56e9e7b6.345948",
+        "type": "file in",
+        "z": "6fb474a3.b7a534",
+        "name": "Read file",
+        "filename": "/home/ubuntu/.node-red/sensorids.json",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "utf8",
+        "x": 340,
+        "y": 380,
+        "wires": [
+            [
+                "d09f005.989008"
+            ]
+        ]
+    },
+    {
+        "id": "d09f005.989008",
+        "type": "function",
+        "z": "6fb474a3.b7a534",
+        "name": "Get random sensor id",
+        "func": "var textByLine = msg.payload.split(\"\\n\")\n\nmsg.payload = textByLine[Math.floor(Math.random() * textByLine.length)]\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 540,
+        "y": 380,
+        "wires": [
+            [
+                "19bc5153.1ee33f"
+            ]
+        ]
+    },
+    {
+        "id": "ed88fc90.40692",
+        "type": "mqtt in",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "topic": "ConnectedCity",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "4902451c.f93f3c",
+        "x": 160,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e95fe7bf.580ab",
+        "type": "debug",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "92e43d9b.665e9",
+        "type": "mqtt out",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "topic": "ConnectedCity/dbb500af-8c53-488a-a64a-04b4618b503b",
+        "qos": "2",
+        "retain": "false",
+        "broker": "4902451c.f93f3c",
+        "x": 700,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "1064a0b1.adbc67",
+        "type": "inject",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "15",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 620,
+        "wires": [
+            [
+                "4b356c59.b25bac"
+            ]
+        ]
+    },
+    {
+        "id": "4b356c59.b25bac",
+        "type": "random",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "low": "-100",
+        "high": "100",
+        "inte": "false",
+        "property": "payload",
+        "x": 340,
+        "y": 620,
+        "wires": [
+            [
+                "92e43d9b.665e9"
+            ]
+        ]
+    },
+    {
+        "id": "fdfcdbd5.cf1f58",
+        "type": "mqtt in",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "topic": "ConnectedCity/dbb500af-8c53-488a-a64a-04b4618b503b",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "4902451c.f93f3c",
+        "x": 290,
+        "y": 720,
+        "wires": [
+            [
+                "e95fe7bf.580ab"
+            ]
+        ]
+    },
+    {
+        "id": "abcb5afa.5257b8",
+        "type": "mongodb",
+        "z": "",
+        "hostname": "connectedcity.6pspi.mongodb.net",
+        "topology": "dnscluster",
+        "connectOptions": "",
+        "port": "27017",
+        "db": "ConnectedCity",
+        "name": ""
+    },
+    {
+        "id": "4902451c.f93f3c",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "test.mosquitto.org",
+        "broker": "test.mosquitto.org",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]
