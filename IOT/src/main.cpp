@@ -174,5 +174,5 @@ void loop()
   sendMqtt();
   mqttClient.loop();
   delay(dht.getMinimumSamplingPeriod() + 1100);
-  json();
+  //json();
 }
