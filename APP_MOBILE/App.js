@@ -23,8 +23,8 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import FinishedActions from './components/finishedActions';
-import NeededActions from './components/neededActions';
+import FinishedActions from './src/components/finishedActions';
+import NeededActions from './src/components/neededActions';
 
 const App: () => React$Node = () => {
   return (
