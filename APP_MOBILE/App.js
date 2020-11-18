@@ -14,6 +14,7 @@ import {
   View,
   Text,
   StatusBar,
+  ImageBackground
 } from 'react-native';
 
 import {
@@ -26,35 +27,39 @@ import {
 import FinishedActions from './src/components/finishedActions';
 import NeededActions from './src/components/neededActions';
 
-const App: () => React$Node = () => {
+const App = () => {
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <View style={styles.body}>
-            <Text>Hello world</Text>
-            <NeededActions />
-            <FinishedActions />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <View style={styles.container}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={styles.scrollView}>
+        <View style={styles.body}>
+          <NeededActions />
+          <FinishedActions style={{bottom: 0}}/>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
+
+const image = { uri: "https://reactjs.org/logo-og.png" };
 
 const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: Colors.lighter,
+  },
+  image: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center"
   },
   engine: {
     position: 'absolute',
     right: 0,
   },
   body: {
-    backgroundColor: Colors.white,
+    backgroundColor: "#fae1c8",
+    flex: 1
   },
   sectionContainer: {
     marginTop: 32,
