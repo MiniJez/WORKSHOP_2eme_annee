@@ -16,9 +16,8 @@ const { User } = require('../models/user');
 //MQTT EMITTER
 const mqttEmitter = new EventEmitter();
 client.on('connect', function () {
-    mqttEmitter.on('SendMqttNotif', () => {
-        console.log('test');
-        //client.publish('ConnectedCity/dbb500af-8c53-488a-a64a-04b4618b503b', 'hello from js')
+    mqttEmitter.on('SendMqttNotif', (alert) => {
+        client.publish('ConnectedCity/dbb500af-8c53-488a-a64a-04b4618b503b', JSON.stringify(alert))
     });
 })
 
@@ -36,7 +35,6 @@ const verifyToken = async (token, res) => {
                 if(!response) {
                     resolve(res.status(401).send({ auth: false, message: 'Auth failed' }));
                 }
-
                 resolve();
             });
         });
@@ -180,7 +178,8 @@ const updateAlert = async (id, update) => {
 const insertAlert = async (alert) => {
     try {
         console.log("insertAlerts/");
-        await Alert.create(alert);
+        //await Alert.create(alert);
+        mqttEmitter.emit('SendMqttNotif', alert);
         console.log("done");
     } catch (error) {
         console.log(error);
