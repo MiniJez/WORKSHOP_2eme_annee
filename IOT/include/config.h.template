@@ -1,6 +1,6 @@
 #define ssid "SSID"
 #define password "PASSWORD"
 #define uuid "XXXXX"
-#define mqtt_server "test.mosquitto.org";
+#define mqtt_server "test.mosquitto.org"
 #define mqtt_topic "ConnectedCity"
 #define mqtt_topic_device "ConnectedCity/XXXXX"
