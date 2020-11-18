@@ -1,0 +1,21 @@
+   <div class="loginBody">
+    <form class="form-signin" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="titre-logo">
+        <img class="mb-1" src="../../assets/meerky-logo-brown.png" alt="" width="200" height="200">
+        <h1 class="h1 mb-4 font-weight-normal font-brown arvo" style="font-size: 3.5rem;">Meerky</h1>
+      </div>
+
+      <label for="inputEmail" class="sr-only font-brown">Adresse Email</label>
+      <input type="email" id="email" class="form-control font-brown" placeholder="Adresse Email" required autofocus formControlName="email">
+      
+      <label for="inputPassword" class="sr-only font-brown">Mot de Passe</label>
+      <input type="password" id="password" class="form-control mb-3 font-brown" placeholder="Mot de Passe" required formControlName="password">
+      
+      <div class="checkbox mb-3">
+        <label>
+          <input class="font-brown" type="checkbox" value="remember-me"> Se souvenir de moi
+        </label>
+      </div>
+      <button pButton class="btn btn-lg btn-primary btn-block secondary-color font-brown arvo" type="submit">Se connecter</button>
+    </form>
+  </div> 
