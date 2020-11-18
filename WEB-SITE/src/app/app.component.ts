@@ -17,19 +17,16 @@ export class AppComponent implements OnInit {
     public router: Router,
   ) { }
 
-  getToken() {
+  async getToken() {
     var email = "edouard.clisson@epsi.fr"
     var pswd = "test"
     var body = { "email": email, "password": pswd }
-    this.http.post<any>(`https://eclisson.duckdns.org/ConnectedCity/login`, body).subscribe(Response => {
-      return Response.token
-    });
-    return ''
+    return this.http.post<any>(`https://eclisson.duckdns.org/ConnectedCity/login`, body).toPromise();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
 
-    var token = this.getToken()
+    let token = await this.getToken();
 
     // map init
     const map = L.map('mainmap', {
@@ -47,14 +44,17 @@ export class AppComponent implements OnInit {
 
     // all alert init
     const alert = L.markerClusterGroup();
-    console.log(token)
-    var header = new HttpHeaders()
-    header.append("x-access-token", token)
+    console.log('token', token)
+    const optionRequete = {
+      headers: new HttpHeaders({
+        'x-access-token': token.token
+      })
+    };
 
     // init cluster button
     const clusterbutton = L.easyButton('fa-dot-circle', (btn, mMap) => {
       // api call
-      this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`, { headers: header }).subscribe(Response => {
+      this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`, optionRequete).subscribe(Response => {
         Response.forEach((element: { lat: number; lon: number; }) => {
           const marker = L.marker([element.lat, element.lon])
           cluster.addLayer(marker);
@@ -65,7 +65,7 @@ export class AppComponent implements OnInit {
     // init alert button
     const alertbutton = L.easyButton('fa-exclamation-triangle', (btn, mMap) => {
       var body = { "sort": { "Temperature": "Il fait trop froid : isolez vos murs" } }
-      this.http.post<any>(`https://eclisson.duckdns.org/ConnectedCity/getAlerts`, body, { headers: header }).subscribe(Response => {
+      this.http.post<any>(`https://eclisson.duckdns.org/ConnectedCity/getAlerts`, body, optionRequete).subscribe(Response => {
         Response.forEach((element: { lat: number; lon: number; }) => {
           const marker = L.marker([element.lat, element.lon])
             .bindPopup(`
@@ -86,7 +86,7 @@ export class AppComponent implements OnInit {
     alertbutton.addTo(map)
 
     // api call
-    this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`, { headers: header }).subscribe(Response => {
+    this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`, optionRequete).subscribe(Response => {
       Response.forEach((element: { lat: number; lon: number; }) => {
         const marker = L.marker([element.lat, element.lon])
           .bindPopup(`
