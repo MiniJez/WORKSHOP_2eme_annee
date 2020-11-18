@@ -1,6 +1,9 @@
-require('dotenv').config();
+require('dotenv').config()
 const jwt = require('jsonwebtoken');
 const { sha512 } = require('js-sha512');
+const mqtt = require('mqtt')
+const client = mqtt.connect('mqtt://test.mosquitto.org')
+const EventEmitter = require('events');
 
 
 // IMPORTS
@@ -8,6 +11,15 @@ const { Sensors } = require('../models/sensors');
 const { RawData } = require('../models/rawData');
 const { Alert } = require('../models/alert');
 const { User } = require('../models/user');
+
+
+//MQTT EMITTER
+const mqttEmitter = new EventEmitter();
+client.on('connect', function () {
+    mqttEmitter.on('SendMqttNotif', (alert) => {
+        client.publish('ConnectedCity/dbb500af-8c53-488a-a64a-04b4618b503b', JSON.stringify(alert))
+    });
+})
 
 
 const verifyToken = async (token, res) => {
@@ -23,7 +35,6 @@ const verifyToken = async (token, res) => {
                 if(!response) {
                     resolve(res.status(401).send({ auth: false, message: 'Auth failed' }));
                 }
-
                 resolve();
             });
         });
@@ -132,6 +143,14 @@ const getAlertInfosSort = async (sort) => {
                     foreignField: 'sensorID',
                     as: 'RawData'
                 }
+            }, 
+            {
+                $lookup: {
+                    from: 'Sensors',
+                    localField: 'SensorID',
+                    foreignField: 'sensorID',
+                    as: 'Sensors'
+                }
             }
         ])
         return (docs)
@@ -167,7 +186,8 @@ const updateAlert = async (id, update) => {
 const insertAlert = async (alert) => {
     try {
         console.log("insertAlerts/");
-        await Alert.create(alert);
+        //await Alert.create(alert);
+        mqttEmitter.emit('SendMqttNotif', alert);
         console.log("done");
     } catch (error) {
         console.log(error);
