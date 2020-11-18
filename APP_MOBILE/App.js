@@ -6,45 +6,15 @@
  * @flow strict-local
  */
 
+import 'react-native-gesture-handler';
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  ImageBackground
-} from 'react-native';
+import MainNavigator from './src/navigation'
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import FinishedActions from './src/components/finishedActions';
-import NeededActions from './src/components/neededActions';
 
 const App = () => {
   return (
-    <View style={styles.fontColor}>
-      <ScrollView>
-          <View style={styles.body}>
-            <NeededActions />
-            <FinishedActions />
-          </View>
-        </ScrollView>
-    </View>
-  );
+    <MainNavigator/>
+  )
 };
-
-const styles = StyleSheet.create({
-  fontColor:{
-    flex: 1,
-    // backgroundColor: "#fae1c8" // Set your own custom Color
-  },
-});
 
 export default App;
