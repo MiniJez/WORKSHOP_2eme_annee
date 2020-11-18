@@ -1,15 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
-  constructor() { }
+  loginForm = new FormGroup({
+    email: new FormControl(''),
+    password: new FormControl(''),
+  });
 
-  ngOnInit(): void {
+  onSubmit() {
+    console.warn(this.loginForm.value);
+    if((this.loginForm.value.email == "meerky@example.fr")&&(this.loginForm.value.password == "jepue") ) {
+      console.warn("exact");
+    }
   }
 
 }
