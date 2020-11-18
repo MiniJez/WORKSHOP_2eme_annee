@@ -2,8 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import 'leaflet-easybutton';
-import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -18,7 +17,19 @@ export class AppComponent implements OnInit {
     public router: Router,
   ) { }
 
+  getToken() {
+    var email = "edouard.clisson@epsi.fr"
+    var pswd = "test"
+    var body = { "email": email, "password": pswd }
+    this.http.post<any>(`https://eclisson.duckdns.org/ConnectedCity/login`, body).subscribe(Response => {
+      return Response.token
+    });
+    return ''
+  }
+
   ngOnInit() {
+
+    var token = this.getToken()
 
     // map init
     const map = L.map('mainmap', {
@@ -34,14 +45,36 @@ export class AppComponent implements OnInit {
     // cluster init
     const cluster = L.markerClusterGroup();
 
-    // all markers init
-    const markers = L.featureGroup();
+    // all alert init
+    const alert = L.markerClusterGroup();
+    console.log(token)
+    var header = new HttpHeaders()
+    header.append("x-access-token", token)
 
     // init cluster button
     const clusterbutton = L.easyButton('fa-dot-circle', (btn, mMap) => {
-      markers.removeFrom(mMap);
-      cluster.addTo(mMap);
+      // api call
+      this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`, { headers: header }).subscribe(Response => {
+        Response.forEach((element: { lat: number; lon: number; }) => {
+          const marker = L.marker([element.lat, element.lon])
+          cluster.addLayer(marker);
+        });
+      });
     }, 'Cluster mode');
+
+    // init alert button
+    const alertbutton = L.easyButton('fa-exclamation-triangle', (btn, mMap) => {
+      var body = { "sort": { "Temperature": "Il fait trop froid : isolez vos murs" } }
+      this.http.post<any>(`https://eclisson.duckdns.org/ConnectedCity/getAlerts`, body, { headers: header }).subscribe(Response => {
+        Response.forEach((element: { lat: number; lon: number; }) => {
+          const marker = L.marker([element.lat, element.lon])
+            .bindPopup(`
+          `);
+          // markers.addLayer(marker);
+          alert.addLayer(marker);
+        });
+      });
+    }, 'Alert mode');
 
     // // init pin mode button
     // const pinbutton = L.easyButton('fa-map-pin', (btn, mMap) => {
@@ -50,10 +83,10 @@ export class AppComponent implements OnInit {
     // }, 'Pin mode');
 
     clusterbutton.addTo(map);
-    // pinbutton.addTo(map)
-    
+    alertbutton.addTo(map)
+
     // api call
-    this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`).subscribe(Response => {
+    this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`, { headers: header }).subscribe(Response => {
       Response.forEach((element: { lat: number; lon: number; }) => {
         const marker = L.marker([element.lat, element.lon])
           .bindPopup(`
