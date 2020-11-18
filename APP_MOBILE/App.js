@@ -29,63 +29,21 @@ import NeededActions from './src/components/neededActions';
 
 const App = () => {
   return (
-    <View style={styles.container}>
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={styles.scrollView}>
-        <View style={styles.body}>
-          <NeededActions />
-          <FinishedActions style={{bottom: 0}}/>
-        </View>
-      </ScrollView>
+    <View style={styles.fontColor}>
+      <ScrollView>
+          <View style={styles.body}>
+            <NeededActions />
+            <FinishedActions />
+          </View>
+        </ScrollView>
     </View>
   );
 };
 
-const image = { uri: "https://reactjs.org/logo-og.png" };
-
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  image: {
+  fontColor:{
     flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center"
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: "#fae1c8",
-    flex: 1
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+    // backgroundColor: "#fae1c8" // Set your own custom Color
   },
 });
 
