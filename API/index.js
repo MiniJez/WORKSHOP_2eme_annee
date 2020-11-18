@@ -18,21 +18,18 @@ const { handleConnection } = require('./connection');
 
 
 // Auth midlleware
-const authMiddleware = ((req, res, next) => {
+const authMiddleware = async (req, res, next) => {
     let token = req.headers['x-access-token'];
-    verifyToken(token, res).then(() => {
-        next();
-    }).catch(err => {
-        console.log(err);
-    })
-});
+    await verifyToken(token, res);
+    next();
+};
 
-var unless = (path, middleware) => {
-    return function(req, res, next) {
+const unless = (path, middleware) => {
+    return async (req, res, next) => {
         if (path === req.path) {
             return next();
         } else {
-            return middleware(req, res, next);
+            return await middleware(req, res, next);
         }
     };
 };

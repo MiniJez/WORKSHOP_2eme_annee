@@ -1,6 +1,6 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const { sha512 } = require('js-sha512');
 
 
 // IMPORTS
@@ -13,31 +13,35 @@ const { User } = require('../models/user');
 const verifyToken = async (token, res) => {
     console.log('verifiyToken');
     if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) resolve(res.status(500).send({ auth: false, message: 'Failed to authenticate token.' }));
+            console.log(decoded)
+            User.findById(decoded.id, (err, response) => {
+                if(err) resolve(res.status(500).send({ auth: false, message: 'Failed to authenticate user.' }));
+                console.log(response);
+                if(!response) {
+                    resolve(res.status(401).send({ auth: false, message: 'Auth failed' }));
+                }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
-        User.findById(decoded.id, (err, response) => {
-            if(err) return res.status(500).send({ auth: false, message: 'Failed to authenticate user.' });
-            console.log(response);
-            if(!response) {
-                return res.status(401).send({ auth: false, message: 'Auth failed' });
-            }
+                resolve();
+            });
         });
-    });
+    })
 }
 
 
 const authUser = async (email, password) => {
     try {
         console.log("login/");
-        let hashedPassword = bcrypt.hashSync(password, 8);
+        let hashedPassword = sha512(password);
         let user = await User.find({email, password: hashedPassword});
-        if(!user.length) {
+        if(!user.length || !user) {
             console.log('create user')
             user = await User.create({email, password: hashedPassword});
         }
-        let token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        console.log(user);
+        let token = jwt.sign({ id: user._id || user[0]._id }, process.env.JWT_SECRET, {
             expiresIn: 86400 // expires in 24 hours
         });
         return token;
