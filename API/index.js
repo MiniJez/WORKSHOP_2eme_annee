@@ -41,7 +41,7 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
         let token = await authUser(email, password);
-        res.send(token);
+        res.send({token});
     } catch (error) {
         console.log(error);
         res.send(error);

@@ -1,6 +1,9 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken');
 const { sha512 } = require('js-sha512');
+const mqtt = require('mqtt')
+const client = mqtt.connect('mqtt://test.mosquitto.org')
+const EventEmitter = require('events');
 
 
 // IMPORTS
@@ -8,6 +11,16 @@ const { Sensors } = require('../models/sensors');
 const { RawData } = require('../models/rawData');
 const { Alert } = require('../models/alert');
 const { User } = require('../models/user');
+
+
+//MQTT EMITTER
+const mqttEmitter = new EventEmitter();
+client.on('connect', function () {
+    mqttEmitter.on('SendMqttNotif', () => {
+        console.log('test');
+        //client.publish('ConnectedCity/dbb500af-8c53-488a-a64a-04b4618b503b', 'hello from js')
+    });
+})
 
 
 const verifyToken = async (token, res) => {
