@@ -4,16 +4,14 @@ import { Card, CheckBox } from 'react-native-elements'
 import Colors from '../constants/Colors';
 
 
-const ActionCard = ({ text }) => {
-    const [checked, setChecked] = useState(false);
-
+const ActionCard = ({ alert, onPress }) => {
     return (
         <Card containerStyle={styles.cardContainer}>
             <View style={styles.container}>
-                <Text>{text}</Text>
+                <Text>{alert.text}</Text>
                 <CheckBox
-                    checked={checked}
-                    onPress={() => setChecked(!checked)}
+                    checked={alert.checked}
+                    onPress={() => onPress(alert)}
                     containerStyle={styles.checkbox}
                     uncheckedColor={Colors.marron}
                     checkedColor={Colors.marron}
