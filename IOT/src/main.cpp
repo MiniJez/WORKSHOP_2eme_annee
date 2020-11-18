@@ -10,21 +10,66 @@ LiquidCrystal_I2C lcd(0x27, 20, 4);
 DHTesp dht;
 WiFiClient espClient;               // create the wifi client
 PubSubClient mqttClient(espClient); // create the mqtt client
+StaticJsonBuffer<2000> jsonBuffer;
 
 void callback(char *topic, byte *payload, unsigned int length)
 {
-  Serial.println("Message arrived !");
+
+  char inData[2000];
+  Serial.println("-**- Message arrived ! -**-");
   Serial.println("Topic :" + String(topic));
-  Serial.print("Message :");
+  Serial.println("Message :");
   for (int i = 0; i < length; i++)
   {
     Serial.print((char)payload[i]);
+    inData[(i - 0)] = (char)payload[i];
   }
+  Serial.println();
+  Serial.println("-**-");
+  JsonObject &doc = jsonBuffer.parseObject(inData);
+
+  const char *CO2 = doc["CO2"];
+  const char *Humidity = doc["Humidity"];
+  const char *PM25 = doc["PM25"];
+  const char *Temperature = doc["Temperature"];
+
+  if (CO2 != NULL)
+  {
+    // tone(12, 25, 100);
+    Serial.println("CO2 :");
+    Serial.println(CO2);
+  }
+  if (Humidity != NULL)
+  {
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    Serial.println("Humidity :");
+    Serial.println(Humidity);
+  }
+  if (PM25 != NULL)
+  {
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    Serial.println("PM25 :");
+    Serial.println(PM25);
+  }
+  if (Temperature != NULL)
+  {
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    Serial.println("Temperature :");
+    Serial.println(Temperature);
+  }
+
   Serial.println();
 }
 
-//Mqtt reconnect function
-void reconnect()
+    //Mqtt reconnect function
+    void
+    reconnect()
 {
   // Loop until we're connected
   while (!mqttClient.connected())
@@ -84,46 +129,6 @@ void setup()
   delay(1500);
 }
 
-void json()
-{
-  StaticJsonDocument<1500> doc;
-  char json[] =
-      "{\"_id\":{\"$oid\":\"5fb4d9e26ace6120c372f9fc\"},\"CO2\":\"A\u00E9ration n\u00E9cessaire : attention aux maux de t\u00EAte, \u00E0 la somnolence, entra\u00EEne une mauvaise concentration, une perte d'attention, une augmentation de la fr\u00E9quence cardiaque et de l\u00E9g\u00E8res naus\u00E9es\",\"PM25\":\"Tout le monde devrait limiter les efforts prolong\u00E9s\",\"Humidite\":\"\",\"Temperature\":\"Il fait trop chaud : \u00E9teignez\/baissez votre chauffage ou ouvrez les fen\u00EAtres\",\"SensorID\":\"972e1be0-e90b-403d-82f6-d9042a0bc6b8\",\"__v\":{\"$numberInt\":\"0\"}}";
-
-  DeserializationError error = deserializeJson(doc, json);
-  if (error)
-  {
-    Serial.print(F("deserializeJson() failed: "));
-    Serial.println(error.f_str());
-    return;
-  }
-  const char *CO2 = doc["CO2"];
-  const char *Humidite = doc["Humidite"];
-  const char *PM25 = doc["PM25"];
-  const char *Temperature = doc["Temperature"];
-
-  if (CO2 != NULL)
-  {
-    Serial.println("CO2 :");
-    Serial.println(CO2);
-  }
-  if (Humidite != NULL)
-  {
-    Serial.println("Humidite :");
-    Serial.println(Humidite);
-  }
-  if (PM25 != NULL)
-  {
-    Serial.println("PM25 :");
-    Serial.println(PM25);
-  }
-  if (Temperature != NULL)
-  {
-    Serial.println("Temperature :");
-    Serial.println(Temperature);
-  }
-}
-
 //mqtt send message
 void sendMqtt()
 {
@@ -155,24 +160,27 @@ void loop()
   lcd.clear();
 
   lcd.setCursor(0, 0);
-  lcd.print("Temp:");
   lcd.print(dht.getTemperature(), 1);
+  lcd.print((char)223);
+  lcd.print("C");
+
+  lcd.setCursor(8, 0);
+  lcd.print(dht.getHumidity(), 0);
+  lcd.print("%");
 
   lcd.setCursor(0, 1);
-  lcd.print("Humi:");
-  lcd.print(dht.getHumidity(), 1);
-
-  lcd.setCursor(0, 2);
-  lcd.print("C02:");
+  // lcd.print("C02:");
   lcd.print(random(5000));
+  lcd.print("PPM");
+
+  lcd.setCursor(8, 1);
+  // lcd.print("PM2.5:");
+  lcd.print(random(500));
+  lcd.print("PPM");
 
   lcd.setCursor(0, 3);
-  lcd.print("PM2.5:");
-  lcd.print(random(500));
-
-  // Serial.println(String(dht.getStatusString()) + " " + String(temperature, 1) + "°C " + String(humidity, 1) + "%");
+  lcd.print((char)183);
   sendMqtt();
   mqttClient.loop();
   delay(dht.getMinimumSamplingPeriod() + 1100);
-  json();
 }

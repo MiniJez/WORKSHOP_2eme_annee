@@ -17,8 +17,8 @@
         "upsert": false,
         "multi": false,
         "operation": "insert",
-        "x": 1040,
-        "y": 280,
+        "x": 860,
+        "y": 360,
         "wires": []
     },
     {
@@ -38,8 +38,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 150,
-        "y": 300,
+        "x": 130,
+        "y": 140,
         "wires": [
             [
                 "26a0f24b.b69f1e",
@@ -60,7 +60,7 @@
         "inte": "false",
         "property": "payload",
         "x": 350,
-        "y": 220,
+        "y": 60,
         "wires": [
             [
                 "19bc5153.1ee33f"
@@ -77,7 +77,7 @@
         "inte": "false",
         "property": "payload",
         "x": 340,
-        "y": 260,
+        "y": 100,
         "wires": [
             [
                 "19bc5153.1ee33f"
@@ -94,7 +94,7 @@
         "inte": "true",
         "property": "payload",
         "x": 330,
-        "y": 300,
+        "y": 140,
         "wires": [
             [
                 "19bc5153.1ee33f"
@@ -111,7 +111,7 @@
         "inte": "true",
         "property": "payload",
         "x": 330,
-        "y": 340,
+        "y": 180,
         "wires": [
             [
                 "19bc5153.1ee33f"
@@ -130,26 +130,26 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 890,
-        "y": 340,
+        "x": 930,
+        "y": 180,
         "wires": []
     },
     {
         "id": "c9f9c99e.7c141",
         "type": "function",
         "z": "6fb474a3.b7a534",
-        "name": "Format Data",
-        "func": "var currentdate = new Date().getTime();\nvar pl = msg.payload;\nconsole.log(msg)\n    var newMsg = {\n        payload: {\n            \"sensorID\" : pl[4],\n            \"time\" : currentdate, \n            \"temp\" :  pl[0],\n            \"humidity\" :  pl[1],\n            \"C02\" :  pl[2],\n            \"PM25\":pl[3],\n        }\n    };\nconsole.log(newMsg);\nreturn newMsg",
+        "name": "Format Data (fake)",
+        "func": "var currentdate = new Date().getTime();\nvar pl = msg.payload;\nconsole.log(msg)\n    var newMsg = {\n        payload: {\n            \"sensorID\" : pl[4],\n            \"time\" : currentdate, \n            \"temp\" :  pl[0].toFixed(2),\n            \"humidity\" :  pl[1].toFixed(2),\n            \"C02\" :  pl[2],\n            \"PM25\":pl[3],\n        }\n    };\nconsole.log(newMsg);\nreturn newMsg",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
-        "x": 710,
-        "y": 280,
+        "x": 730,
+        "y": 120,
         "wires": [
             [
-                "816cc55b.9dce6",
-                "69d642f8.3e84bc"
+                "2a4639ed.39f33e",
+                "816cc55b.9dce6"
             ]
         ]
     },
@@ -174,7 +174,7 @@
         "reduceInitType": "",
         "reduceFixup": "",
         "x": 550,
-        "y": 280,
+        "y": 120,
         "wires": [
             [
                 "c9f9c99e.7c141"
@@ -192,7 +192,7 @@
         "sendError": false,
         "encoding": "utf8",
         "x": 340,
-        "y": 380,
+        "y": 220,
         "wires": [
             [
                 "d09f005.989008"
@@ -210,7 +210,7 @@
         "initialize": "",
         "finalize": "",
         "x": 540,
-        "y": 380,
+        "y": 220,
         "wires": [
             [
                 "19bc5153.1ee33f"
@@ -226,10 +226,12 @@
         "qos": "2",
         "datatype": "auto",
         "broker": "4902451c.f93f3c",
-        "x": 160,
-        "y": 520,
+        "x": 140,
+        "y": 360,
         "wires": [
-            []
+            [
+                "807f7d39.cb9978"
+            ]
         ]
     },
     {
@@ -244,8 +246,8 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 690,
-        "y": 720,
+        "x": 670,
+        "y": 560,
         "wires": []
     },
     {
@@ -257,8 +259,8 @@
         "qos": "2",
         "retain": "false",
         "broker": "4902451c.f93f3c",
-        "x": 700,
-        "y": 620,
+        "x": 660,
+        "y": 500,
         "wires": []
     },
     {
@@ -279,11 +281,9 @@
         "payload": "",
         "payloadType": "date",
         "x": 150,
-        "y": 620,
+        "y": 500,
         "wires": [
-            [
-                "4b356c59.b25bac"
-            ]
+            []
         ]
     },
     {
@@ -295,8 +295,8 @@
         "high": "100",
         "inte": "false",
         "property": "payload",
-        "x": 340,
-        "y": 620,
+        "x": 320,
+        "y": 500,
         "wires": [
             [
                 "92e43d9b.665e9"
@@ -312,13 +312,107 @@
         "qos": "2",
         "datatype": "auto",
         "broker": "4902451c.f93f3c",
-        "x": 290,
-        "y": 720,
+        "x": 270,
+        "y": 560,
         "wires": [
             [
                 "e95fe7bf.580ab"
             ]
         ]
+    },
+    {
+        "id": "807f7d39.cb9978",
+        "type": "json",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 310,
+        "y": 360,
+        "wires": [
+            [
+                "df77e63b.550b68"
+            ]
+        ]
+    },
+    {
+        "id": "25457914.4f42a6",
+        "type": "debug",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 710,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "df77e63b.550b68",
+        "type": "function",
+        "z": "6fb474a3.b7a534",
+        "name": "Format Data (real)",
+        "func": "var currentdate = new Date().getTime();\nvar pl = msg.payload;\nconsole.log(msg)\n    var newMsg = {\n        payload: {\n            \"sensorID\" : pl.sensorID,\n            \"time\" : currentdate, \n            \"temp\" :  pl.temp,\n            \"humidity\" :  pl.humidity,\n            \"C02\" :  pl.C02,\n            \"PM25\":pl.PM25,\n        }\n    };\nconsole.log(newMsg);\nreturn newMsg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 490,
+        "y": 360,
+        "wires": [
+            [
+                "25457914.4f42a6",
+                "69d642f8.3e84bc"
+            ]
+        ]
+    },
+    {
+        "id": "2a4639ed.39f33e",
+        "type": "mqtt out",
+        "z": "6fb474a3.b7a534",
+        "name": "",
+        "topic": "ConnectedCity",
+        "qos": "2",
+        "retain": "",
+        "broker": "4902451c.f93f3c",
+        "x": 940,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "dbe3a713.93e308",
+        "type": "comment",
+        "z": "6fb474a3.b7a534",
+        "name": "Fake Generation",
+        "info": "",
+        "x": 140,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "812bf5dd.ced738",
+        "type": "comment",
+        "z": "6fb474a3.b7a534",
+        "name": "Mqtt Reception",
+        "info": "",
+        "x": 140,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "25c94990.4c7c96",
+        "type": "comment",
+        "z": "6fb474a3.b7a534",
+        "name": "Send Alerts",
+        "info": "",
+        "x": 130,
+        "y": 460,
+        "wires": []
     },
     {
         "id": "abcb5afa.5257b8",
