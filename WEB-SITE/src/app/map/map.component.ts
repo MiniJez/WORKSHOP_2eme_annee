@@ -4,6 +4,7 @@ import 'leaflet.markercluster';
 import 'leaflet-easybutton';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
   selector: 'map-root',
@@ -15,6 +16,7 @@ export class MapComponent implements OnInit {
     public http: HttpClient,
     private route: ActivatedRoute,
     public router: Router,
+    private spinner: NgxSpinnerService
   ) { }
 
   async getToken() {
@@ -25,6 +27,7 @@ export class MapComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.spinner.show();
 
     let token = await this.getToken();
 
@@ -98,10 +101,13 @@ export class MapComponent implements OnInit {
           `);
         // markers.addLayer(marker);
         cluster.addLayer(marker);
+
       });
+      this.spinner.hide();
     });
 
     // add the clusters
     map.addLayer(cluster);
+
   }
 }
