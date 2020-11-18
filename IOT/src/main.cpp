@@ -4,6 +4,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <DHTesp.h>
 #include "config.h"
+#include <ArduinoJson.h>
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 DHTesp dht;
@@ -83,6 +84,46 @@ void setup()
   delay(1500);
 }
 
+void json()
+{
+  StaticJsonDocument<1500> doc;
+  char json[] =
+      "{\"_id\":{\"$oid\":\"5fb4d9e26ace6120c372f9fc\"},\"CO2\":\"A\u00E9ration n\u00E9cessaire : attention aux maux de t\u00EAte, \u00E0 la somnolence, entra\u00EEne une mauvaise concentration, une perte d'attention, une augmentation de la fr\u00E9quence cardiaque et de l\u00E9g\u00E8res naus\u00E9es\",\"PM25\":\"Tout le monde devrait limiter les efforts prolong\u00E9s\",\"Humidite\":\"\",\"Temperature\":\"Il fait trop chaud : \u00E9teignez\/baissez votre chauffage ou ouvrez les fen\u00EAtres\",\"SensorID\":\"972e1be0-e90b-403d-82f6-d9042a0bc6b8\",\"__v\":{\"$numberInt\":\"0\"}}";
+
+  DeserializationError error = deserializeJson(doc, json);
+  if (error)
+  {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+  }
+  const char *CO2 = doc["CO2"];
+  const char *Humidite = doc["Humidite"];
+  const char *PM25 = doc["PM25"];
+  const char *Temperature = doc["Temperature"];
+
+  if (CO2 != NULL)
+  {
+    Serial.println("CO2 :");
+    Serial.println(CO2);
+  }
+  if (Humidite != NULL)
+  {
+    Serial.println("Humidite :");
+    Serial.println(Humidite);
+  }
+  if (PM25 != NULL)
+  {
+    Serial.println("PM25 :");
+    Serial.println(PM25);
+  }
+  if (Temperature != NULL)
+  {
+    Serial.println("Temperature :");
+    Serial.println(Temperature);
+  }
+}
+
 //mqtt send message
 void sendMqtt()
 {
@@ -133,4 +174,5 @@ void loop()
   sendMqtt();
   mqttClient.loop();
   delay(dht.getMinimumSamplingPeriod() + 1100);
+  json();
 }
