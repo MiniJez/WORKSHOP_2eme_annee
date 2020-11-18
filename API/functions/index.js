@@ -1,10 +1,50 @@
 require('dotenv').config()
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 
 // IMPORTS
 const { Sensors } = require('../models/sensors');
 const { RawData } = require('../models/rawData');
 const { Alert } = require('../models/alert');
+const { User } = require('../models/user');
+
+
+const verifyToken = async (token, res) => {
+    console.log('verifiyToken');
+    if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+
+        User.findById(decoded.id, (err, response) => {
+            if(err) return res.status(500).send({ auth: false, message: 'Failed to authenticate user.' });
+            console.log(response);
+            if(!response) {
+                return res.status(401).send({ auth: false, message: 'Auth failed' });
+            }
+        });
+    });
+}
+
+
+const authUser = async (email, password) => {
+    try {
+        console.log("login/");
+        let hashedPassword = bcrypt.hashSync(password, 8);
+        let user = await User.find({email, password: hashedPassword});
+        if(!user.length) {
+            console.log('create user')
+            user = await User.create({email, password: hashedPassword});
+        }
+        let token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: 86400 // expires in 24 hours
+        });
+        return token;
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 const getAllSensorsData = async () => {
@@ -155,3 +195,5 @@ module.exports.insertAlert = insertAlert;
 module.exports.getRawData = getRawData;
 module.exports.getStats = getStats;
 module.exports.getAlertInfosSort = getAlertInfosSort;
+module.exports.authUser = authUser;
+module.exports.verifyToken = verifyToken;

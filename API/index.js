@@ -13,9 +13,43 @@ app.use(cors());
 
 
 // IMPORTS
-const { getAllSensorsData, getAllUserID, getUserInfo, getSensorInfos, getAlertInfos, updateAlert, insertAlert, getRawData, getStats, getAlertInfosSort } = require('./functions');
+const { getAllSensorsData, getAllUserID, getUserInfo, getSensorInfos, getAlertInfos, updateAlert, insertAlert, getRawData, getStats, getAlertInfosSort, authUser, verifyToken } = require('./functions');
 const { handleConnection } = require('./connection');
-handleConnection();
+
+
+// Auth midlleware
+const authMiddleware = ((req, res, next) => {
+    let token = req.headers['x-access-token'];
+    verifyToken(token, res).then(() => {
+        next();
+    }).catch(err => {
+        console.log(err);
+    })
+});
+
+var unless = (path, middleware) => {
+    return function(req, res, next) {
+        if (path === req.path) {
+            return next();
+        } else {
+            return middleware(req, res, next);
+        }
+    };
+};
+
+app.use(unless('/login', authMiddleware));
+
+
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        let token = await authUser(email, password);
+        res.send(token);
+    } catch (error) {
+        console.log(error);
+        res.send(error);
+    }
+})
 
 
 app.get('/getSensors', async (req, res) => {
@@ -49,9 +83,7 @@ app.get('/getRawData', async (req, res) => {
 })
 
 app.post('/getRawData', async (req, res) => {
-    console.log('post')
     const { limit, sort } = req.body;
-    console.log(limit, sort)
     try {
         let rawData = await getRawData(limit, sort);
         res.send(rawData);
@@ -142,4 +174,5 @@ app.get('/getStats', async (req, res) => {
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`)
+    handleConnection();
 })
