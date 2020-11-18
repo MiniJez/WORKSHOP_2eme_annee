@@ -143,6 +143,14 @@ const getAlertInfosSort = async (sort) => {
                     foreignField: 'sensorID',
                     as: 'RawData'
                 }
+            }, 
+            {
+                $lookup: {
+                    from: 'Sensors',
+                    localField: 'SensorID',
+                    foreignField: 'sensorID',
+                    as: 'Sensors'
+                }
             }
         ])
         return (docs)
