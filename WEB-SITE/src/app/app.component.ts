@@ -44,6 +44,8 @@ export class AppComponent implements OnInit {
 
     // all alert init
     const alert = L.markerClusterGroup();
+
+    // init header
     console.log('token', token)
     const optionRequete = {
       headers: new HttpHeaders({
@@ -53,27 +55,14 @@ export class AppComponent implements OnInit {
 
     // init cluster button
     const clusterbutton = L.easyButton('fa-dot-circle', (btn, mMap) => {
-      // api call
-      this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`, optionRequete).subscribe(Response => {
-        Response.forEach((element: { lat: number; lon: number; }) => {
-          const marker = L.marker([element.lat, element.lon])
-          cluster.addLayer(marker);
-        });
-      });
+      alert.removeFrom(mMap);
+      cluster.addTo(mMap);
     }, 'Cluster mode');
 
     // init alert button
     const alertbutton = L.easyButton('fa-exclamation-triangle', (btn, mMap) => {
-      var body = { "sort": { "Temperature": "Il fait trop froid : isolez vos murs" } }
-      this.http.post<any>(`https://eclisson.duckdns.org/ConnectedCity/getAlerts`, body, optionRequete).subscribe(Response => {
-        Response.forEach((element: { lat: number; lon: number; }) => {
-          const marker = L.marker([element.lat, element.lon])
-            .bindPopup(`
-          `);
-          // markers.addLayer(marker);
-          alert.addLayer(marker);
-        });
-      });
+      cluster.removeFrom(mMap);
+      alert.addTo(mMap);
     }, 'Alert mode');
 
     // // init pin mode button
@@ -85,7 +74,20 @@ export class AppComponent implements OnInit {
     clusterbutton.addTo(map);
     alertbutton.addTo(map)
 
-    // api call
+    // api call Alert
+    var body = { "sort": { "Temperature": "Il fait trop froid : isolez vos murs" } }
+    this.http.post<any>(`https://eclisson.duckdns.org/ConnectedCity/getAlerts`, body, optionRequete).subscribe(Response => {
+      Response.forEach((element: { Sensors: any; }) => {
+        var sensors = element.Sensors
+        sensors.forEach((item: { lat: number; lon: number; }) => {
+          const marker = L.marker([item.lat, item.lon])
+            .bindPopup(`Besoin d'isolation`);
+          alert.addLayer(marker);
+        })
+      });
+    });
+
+    // api call Get all
     this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`, optionRequete).subscribe(Response => {
       Response.forEach((element: { lat: number; lon: number; }) => {
         const marker = L.marker([element.lat, element.lon])
