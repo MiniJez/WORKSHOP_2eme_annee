@@ -35,6 +35,7 @@ class Alerts():
             print("Send notification for Humidity")
         elif temperatureAlert != "":
             print("Send notification for Temperature")
+        
         dataToInsert = {
             "alert": {
                 "CO2": co2Alert,
@@ -44,6 +45,7 @@ class Alerts():
                 "SensorID": sensor["sensorID"][0]
             }
         }
+        
         print("Data to insert : "+json.dumps(dataToInsert))
         requests.post("https://eclisson.duckdns.org/ConnectedCity/insertAlerts", json=dataToInsert)
 
@@ -75,6 +77,6 @@ class Alerts():
                     "Temperature": temperatureAlert
                 }
             }
+            
             print("Data to update : "+str(dataToUpdate))
-            requests.post("https://eclisson.duckdns.org/ConnectedCity/updateAlerts/" + sensor["sensorID"][0],
-                          json=dataToUpdate)
+            requests.post("https://eclisson.duckdns.org/ConnectedCity/updateAlerts/" + sensor["sensorID"][0], json=dataToUpdate)
