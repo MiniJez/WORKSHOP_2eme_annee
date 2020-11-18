@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone, } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import 'leaflet-easybutton';
@@ -12,11 +12,15 @@ import { NgxSpinnerService } from "ngx-spinner";
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
+
+  public selectedSensor: any;
+
   constructor(
     public http: HttpClient,
     private route: ActivatedRoute,
     public router: Router,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private zone: NgZone,
   ) { }
 
   async getToken() {
@@ -35,7 +39,7 @@ export class MapComponent implements OnInit {
     const map = L.map('mainmap', {
       worldCopyJump: true,
       center: [45.187965, 5.731230],
-      zoom: 13
+      zoom: 13.25
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -84,9 +88,13 @@ export class MapComponent implements OnInit {
 
       Response.forEach((element: { Sensors: any; }) => {
         var sensors = element.Sensors
-        sensors.forEach((item: { lat: number; lon: number; }) => {
+        sensors.forEach((item: { lat: number; lon: number; address: string; sensorID: string; }) => {
           const marker = L.marker([item.lat, item.lon])
-            .bindPopup(`<a href=#>Plus d'information</a>`);
+            .bindPopup(`
+            <p>Adresse : ${item.address}</p>
+            <a href="/details/${item.sensorID}">Plus d'information</a>
+            `)
+          marker.on('click', () => { this.selectedSensor = item.sensorID[0]; console.log(this.selectedSensor) });
           alert.addLayer(marker);
         })
       });
@@ -94,11 +102,13 @@ export class MapComponent implements OnInit {
 
     // api call Get all
     this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`, optionRequete).subscribe(Response => {
-      Response.forEach((element: { lat: number; lon: number; address: string }) => {
+      Response.forEach((element: { lat: number; lon: number; address: string; sensorID: string }) => {
         const marker = L.marker([element.lat, element.lon])
           .bindPopup(`
             <p>Adresse : ${element.address}</p>
+            <a href="/details/${element.sensorID}">Plus d'information</a>
           `);
+        marker.on('click', () => { this.selectedSensor = element.sensorID[0]; console.log(this.selectedSensor) });
         // markers.addLayer(marker);
         cluster.addLayer(marker);
 

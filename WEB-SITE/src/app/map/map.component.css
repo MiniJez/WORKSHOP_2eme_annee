@@ -1,4 +1,5 @@
-#mainmap {
-  height: 60vh;
-  width: 90vh;
+#mainmap,
+#statsmap {
+  height: 100vh;
+  width: 100%;
 }
