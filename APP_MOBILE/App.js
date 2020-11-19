@@ -9,12 +9,16 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import MainNavigator from './src/navigation'
-import Login from './src/screens/login'
+import { Provider } from 'react-redux';
+import configureStore from './src/redux/store';
 
+const store = configureStore();
 
 const App = () => {
   return (
-    <Login/>
+    <Provider store={store}>
+      <MainNavigator />
+    </Provider>
   )
 };
 

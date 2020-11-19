@@ -1,72 +1,62 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, TextInput, TouchableOpacity, Text, Image } from 'react-native'
+import { View, StyleSheet, TextInput, TouchableOpacity, Text, Image } from 'react-native'
 import Colors from '../../constants/Colors';
 import Images from '../../constants/Images'
-import { sha512 } from 'react-native-sha512';
+import { connect } from 'react-redux'
+import { login } from '../../redux/actions/loginActions'
+import { createLoadingSelector } from '../../redux/selectors/directSelectors'
+import { usePrevious } from '../../customHooks/usePrevious'
 
 
-const Login = () => {
+const Login = (props) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const signIn = () => {
-        console.log(email);
-        console.log(password);
-        fetch('https://eclisson.duckdns.org/ConnectedCity/login', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password,
-
-            })
-        })
-        .then((response) => {return response.json()})
-        .then((response)=> {
-            console.log(response)
-//            Stocker le token SyncStorage
-//            Rediriger vers Home
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    }
+    const { login, loadingLogin, navigation } = props
+    const prevLoadingLogin = usePrevious(loadingLogin)
+    console.log(props)
 
     return (
-       <View style={styles.container}>
-           <Image
-               source={Images.logo}
-               style={styles.image1}
-               resizeMode="contain"
-           />
-           <View style={styles.viewInput}>
-               <TextInput
-                style={styles.textInput}
-                placeholder="Email...."
-                onChangeText={(value) => setEmail(value)}
-               />
-               <TextInput
-                style={styles.textInput}
-                placeholder="Mot de passe...."
-                onChangeText={(value) => setPassword(value)}
-                secureTextEntry={true}
-               />
-           </View>
-           <TouchableOpacity
-            onPress={() => signIn({email, password})}>
-               <Text>Se connecter</Text>
-           </TouchableOpacity>
+        <View style={styles.container}>
+            <Image
+                source={Images.logo}
+                style={styles.image1}
+                resizeMode="contain"
+            />
+            <View style={styles.viewInput}>
+                <TextInput
+                    style={styles.textInput}
+                    placeholder="Email...."
+                    onChangeText={(value) => setEmail(value)}
+                />
+                <TextInput
+                    style={styles.textInput}
+                    placeholder="Mot de passe...."
+                    onChangeText={(value) => setPassword(value)}
+                    secureTextEntry={true}
+                />
+            </View>
+            <TouchableOpacity
+                onPress={() => login(email, password)}>
+                <Text>Se connecter</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
-const SignIn = () => {
 
-};
+const mapStateToProps = state => ({
+    state,
+    loadingLogin: createLoadingSelector(['LOGIN'])(state)
+});
+
+
+const mapDispatchToProps = {
+    login
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
 
 
 const styles = StyleSheet.create({
@@ -76,17 +66,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     viewInput: {
-        backgroundColor:"#FFFFFF",
-        borderRadius:25,
-        marginBottom:20,
+        backgroundColor: "#FFFFFF",
+        borderRadius: 25,
+        marginBottom: 20,
     },
     textInput: {
-        padding:20
+        padding: 20
     },
     image1: {
         width: '30%',
         height: '25%',
     }
 });
-
-export default Login;
