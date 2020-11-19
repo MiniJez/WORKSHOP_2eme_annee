@@ -46,6 +46,23 @@ export class MapComponent implements OnInit {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright%22%3EOpenStreetMap</a> contributors'
     }).addTo(map)
 
+    /*Legend specific*/
+    var legend = L.control({ position: "bottomleft" });
+
+    legend.onAdd = function () {
+      var div = L.DomUtil.create("div", "legend");
+      div.innerHTML += "<h4>Légende</h4>";
+      div.innerHTML += '<img src="../../assets/icon-grey.jpg" width="30" height="25"><span>Capteur</span><br>';
+      div.innerHTML += '<img src="../../assets/icon-green.png" width="30" height="25"><span>Capteur avec 1 alerte</span><br>';
+      div.innerHTML += '<img src="../../assets/icon-orange.png" width="30" height="25"><span>Capteur avec 2 alertes</span><br>';
+      div.innerHTML += '<img src="../../assets/icon-red.png" width="30" height="25"><span>Capteur avec 3 alertes</span><br>';
+
+      return div;
+    };
+
+    legend.addTo(map);
+
+
     // cluster init
     const cluster = L.markerClusterGroup();
 
@@ -70,12 +87,6 @@ export class MapComponent implements OnInit {
       cluster.removeFrom(mMap);
       alert.addTo(mMap);
     }, 'Alert mode');
-
-    // // init pin mode button
-    // const pinbutton = L.easyButton('fa-map-pin', (btn, mMap) => {
-    //   cluster.removeFrom(mMap);
-    //   markers.addTo(mMap);
-    // }, 'Pin mode');
 
     clusterbutton.addTo(map);
     alertbutton.addTo(map)
