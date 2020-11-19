@@ -148,11 +148,11 @@ export class MapDetailsComponent implements OnInit {
               width: 39 // for adjusting arc thickness
             },
             color: {
-              pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
+              pattern: ['#4B6ADC', '#60B044', '#F97600', '#FF0000'], // the three color levels for the percentage values.
               threshold: {
                 unit: '°C', // percentage is default
-                max: 200, // 100 is default
-                values: [30, 60, 90, 100]
+                max: 50, // 100 is default
+                values: [18, 25, 30, 50]
               }
             },
             size: {
@@ -180,11 +180,11 @@ export class MapDetailsComponent implements OnInit {
               width: 39 // for adjusting arc thickness
             },
             color: {
-              pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
+              pattern: ['#F97600', '#60B044', '#4B6ADC'], // the three color levels for the percentage values.
               threshold: {
                 unit: '%', // percentage is default
-                max: 200, // 100 is default
-                values: [30, 60, 90, 100]
+                max: 100, // 100 is default
+                values: [40, 60, 100]
               }
             },
             size: {
@@ -212,11 +212,9 @@ export class MapDetailsComponent implements OnInit {
               width: 39 // for adjusting arc thickness
             },
             color: {
-              pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
+              pattern: ['#60B044', '#F6C600', '#F97600', '#FF0000'], // the three color levels for the percentage values.
               threshold: {
-                unit: 'PPM', // percentage is default
-                max: 200, // 100 is default
-                values: [30, 60, 90, 100]
+                values: [1000, 2000, 3000, 5000]
               }
             },
             size: {
@@ -240,15 +238,13 @@ export class MapDetailsComponent implements OnInit {
               },
               min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
               max: 500, // 100 is default
-              units: ' PPM',
+              units: ' µg/m^3',
               width: 39 // for adjusting arc thickness
             },
             color: {
-              pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
+              pattern: ['#60B044', '#F6C600', '#F97600', '#FF0000'], // the three color levels for the percentage values.
               threshold: {
-                unit: 'PPM', // percentage is default
-                max: 200, // 100 is default
-                values: [30, 60, 90, 100]
+                values: [12, 55, 150, 500]
               }
             },
             size: {

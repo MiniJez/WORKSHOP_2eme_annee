@@ -134,7 +134,7 @@ export class MapComponent implements OnInit {
           const marker = L.marker([sensors.lat, sensors.lon], { icon: iconColor[col] })
             .bindPopup(`
             <p>Adresse : ${sensors.address}</p>
-            <a href="meerky/details/${sensors.sensorID}">Plus d'information</a>
+            <a target="blank" href="meerky/details/${sensors.sensorID}">Plus d'informations</a>
             `)
           marker.on('click', () => {
             this.selectedSensor = sensors
@@ -149,7 +149,7 @@ export class MapComponent implements OnInit {
           const marker = L.marker([element.lat, element.lon], { icon: iconColor[0] })
             .bindPopup(`
             <p>Adresse : ${element.address}</p>
-            <a href="meerky/details/${element.sensorID}">Plus d'information</a>
+            <a target="blank" href="meerky/details/${element.sensorID}">Plus d'informations</a>
             `);
           marker.on('click', () => {
             this.selectedSensor = element
