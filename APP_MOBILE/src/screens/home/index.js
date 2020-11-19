@@ -8,6 +8,8 @@ import { Button } from 'react-native-elements'
 import { logout } from '../../redux/actions/loginActions'
 import { sensor, sensorUpdate } from '../../redux/actions/sensorActions'
 import { connect } from 'react-redux'
+import { createLoadingSelector } from '../../redux/selectors/directSelectors'
+import { usePrevious } from '../../customHooks/usePrevious'
 
 let fakeData = [
     {
@@ -25,16 +27,19 @@ let fakeData = [
 
 const Home = (props) => {
 
-    const { logout, sensor, sensorUpdate, alert } = props
+    const { logout, sensor, sensorUpdate, alert, loadingAlert } = props
     const [fakeDataState, setFakeDataState] = useState(alert.alert);
-    console.log(alert.alert)
+    const previousLoadingAlert = usePrevious(loadingAlert);
+
     useEffect( () => {
         sensor()
     }, [])
 
     useEffect( () => {
-        console.log('hey')
-    }, [alert])
+        if(previousLoadingAlert && !loadingAlert && previousLoadingAlert !== loadingAlert) {
+            setFakeDataState(alert.alert);
+        }
+    }, [loadingAlert])
 
 
     const onPress = (check) => {
@@ -45,6 +50,7 @@ const Home = (props) => {
                 setFakeDataState(obj);
             }
         })
+        console.log('hey')
         sensorUpdate(fakeDataState)
     }
 
@@ -84,7 +90,8 @@ const Home = (props) => {
 
 const mapStateToProps = state => ({
     state, 
-    alert: state.sensorReducer
+    alert: state.sensorReducer,
+    loadingAlert: createLoadingSelector(['SENSOR'])(state)
 });
 
 
