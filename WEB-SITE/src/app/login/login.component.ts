@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, Renderer2 } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,7 +22,18 @@ export class LoginComponent {
     public router: Router,
     private spinner: NgxSpinnerService,
     private zone: NgZone,
+    private renderer2: Renderer2
     ){}
+
+    ngOnInit() {
+      this.renderer2.addClass(document.body.parentElement, 'wholeClassGameBody_student');
+      this.renderer2.addClass(document.body, 'wholeClassGameBody_student');
+    }
+  
+    ngOnDestroy() {
+      this.renderer2.removeClass(document.body.parentElement, 'wholeClassGameBody_student');
+      this.renderer2.removeClass(document.body, 'wholeClassGameBody_student');
+    }
 
   async getToken(email : any, password : any) {
     var body = { "email": email, "password": password }
