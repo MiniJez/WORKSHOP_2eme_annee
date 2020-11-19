@@ -5,7 +5,7 @@ h3 {
 h1 {
     padding-top: 50px;
     padding-bottom: 50px;
-    background-image: url(../../assets/Image5.png), url(../../assets/Image1.png), url(../../assets/Image9.png);
+    background-image: url(assets/Image5.png), url(assets/Image1.png), url(assets/Image9.png);
     background-repeat: no-repeat,no-repeat,no-repeat, no-repeat;
     background-position: left top,left top, right top, right top;
     background-size: 10%,15%,10%, 10%;
