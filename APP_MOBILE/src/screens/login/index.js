@@ -1,20 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity, Text, Image } from 'react-native'
 import Colors from '../../constants/Colors';
 import Images from '../../constants/Images'
 import { connect } from 'react-redux'
 import { login } from '../../redux/actions/loginActions'
-import { createLoadingSelector } from '../../redux/selectors/directSelectors'
-import { usePrevious } from '../../customHooks/usePrevious'
 
 
 const Login = (props) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login, loadingLogin, navigation } = props
-    const prevLoadingLogin = usePrevious(loadingLogin)
-    console.log(props)
+    const { login } = props
 
     return (
         <View style={styles.container}>
@@ -47,7 +43,6 @@ const Login = (props) => {
 
 const mapStateToProps = state => ({
     state,
-    loadingLogin: createLoadingSelector(['LOGIN'])(state)
 });
 
 

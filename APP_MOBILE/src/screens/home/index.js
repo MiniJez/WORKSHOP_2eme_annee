@@ -7,7 +7,6 @@ import Images from '../../constants/Images'
 import { Button } from 'react-native-elements'
 import { logout } from '../../redux/actions/loginActions'
 import { connect } from 'react-redux'
-import { createLoadingSelector } from '../../redux/selectors/directSelectors'
 
 let fakeData = [
     {
@@ -27,7 +26,6 @@ const Home = (props) => {
 
     const [fakeDataState, setFakeDataState] = useState(fakeData);
     const { logout } = props
-    console.log(props)
 
     const onPress = (alert) => {
         fakeDataState.forEach((value, index) => {
@@ -75,7 +73,6 @@ const Home = (props) => {
 
 const mapStateToProps = state => ({
     state,
-    loadingLogin: createLoadingSelector(['LOGOUT'])(state)
 });
 
 
