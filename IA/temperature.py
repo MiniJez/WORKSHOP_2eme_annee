@@ -1,15 +1,14 @@
 from alerts import Alerts
 import requests
 import json
-
-
+import token_env
 
 def temperature_median():
     filter = {
         "sort": -1,
         "limit": 1000
     }
-    rawDataResponse = requests.post("https://eclisson.duckdns.org/ConnectedCity/getRawdata", json=filter)
+    rawDataResponse = requests.post("https://eclisson.duckdns.org/ConnectedCity/getRawdata", headers=token_env.HEADERS, json=filter)
     rawData = json.loads(rawDataResponse.text)
 
     temp = 0

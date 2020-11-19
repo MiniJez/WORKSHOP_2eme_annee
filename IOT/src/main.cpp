@@ -4,26 +4,72 @@
 #include <LiquidCrystal_I2C.h>
 #include <DHTesp.h>
 #include "config.h"
+#include <ArduinoJson.h>
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 DHTesp dht;
 WiFiClient espClient;               // create the wifi client
 PubSubClient mqttClient(espClient); // create the mqtt client
+StaticJsonBuffer<2000> jsonBuffer;
 
 void callback(char *topic, byte *payload, unsigned int length)
 {
-  Serial.println("Message arrived !");
+
+  char inData[2000];
+  Serial.println("-**- Message arrived ! -**-");
   Serial.println("Topic :" + String(topic));
-  Serial.print("Message :");
+  Serial.println("Message :");
   for (int i = 0; i < length; i++)
   {
     Serial.print((char)payload[i]);
+    inData[(i - 0)] = (char)payload[i];
   }
+  Serial.println();
+  Serial.println("-**-");
+  JsonObject &doc = jsonBuffer.parseObject(inData);
+
+  const char *CO2 = doc["CO2"];
+  const char *Humidity = doc["Humidity"];
+  const char *PM25 = doc["PM25"];
+  const char *Temperature = doc["Temperature"];
+
+  if (CO2 != NULL)
+  {
+    // tone(12, 25, 100);
+    Serial.println("CO2 :");
+    Serial.println(CO2);
+  }
+  if (Humidity != NULL)
+  {
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    Serial.println("Humidity :");
+    Serial.println(Humidity);
+  }
+  if (PM25 != NULL)
+  {
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    Serial.println("PM25 :");
+    Serial.println(PM25);
+  }
+  if (Temperature != NULL)
+  {
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    // tone(12, 25, 100);
+    Serial.println("Temperature :");
+    Serial.println(Temperature);
+  }
+
   Serial.println();
 }
 
-//Mqtt reconnect function
-void reconnect()
+    //Mqtt reconnect function
+    void
+    reconnect()
 {
   // Loop until we're connected
   while (!mqttClient.connected())
@@ -114,22 +160,26 @@ void loop()
   lcd.clear();
 
   lcd.setCursor(0, 0);
-  lcd.print("Temp:");
   lcd.print(dht.getTemperature(), 1);
+  lcd.print((char)223);
+  lcd.print("C");
+
+  lcd.setCursor(8, 0);
+  lcd.print(dht.getHumidity(), 0);
+  lcd.print("%");
 
   lcd.setCursor(0, 1);
-  lcd.print("Humi:");
-  lcd.print(dht.getHumidity(), 1);
-
-  lcd.setCursor(0, 2);
-  lcd.print("C02:");
+  // lcd.print("C02:");
   lcd.print(random(5000));
+  lcd.print("PPM");
+
+  lcd.setCursor(8, 1);
+  // lcd.print("PM2.5:");
+  lcd.print(random(500));
+  lcd.print("PPM");
 
   lcd.setCursor(0, 3);
-  lcd.print("PM2.5:");
-  lcd.print(random(500));
-
-  // Serial.println(String(dht.getStatusString()) + " " + String(temperature, 1) + "°C " + String(humidity, 1) + "%");
+  lcd.print((char)183);
   sendMqtt();
   mqttClient.loop();
   delay(dht.getMinimumSamplingPeriod() + 1100);

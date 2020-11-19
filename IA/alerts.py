@@ -1,5 +1,6 @@
 import requests
 import json
+import token_env
 
 
 class Alerts():
@@ -47,7 +48,7 @@ class Alerts():
         }
         
         print("Data to insert : "+json.dumps(dataToInsert))
-        requests.post("https://eclisson.duckdns.org/ConnectedCity/insertAlerts", json=dataToInsert)
+        requests.post("https://eclisson.duckdns.org/ConnectedCity/insertAlerts", headers=token_env.HEADERS, json=dataToInsert)
 
     ###
     #  Function qui va permettre de modifier en base de données une ligne d'alerte pour un sensor donné
@@ -79,4 +80,4 @@ class Alerts():
             }
             
             print("Data to update : "+str(dataToUpdate))
-            requests.post("https://eclisson.duckdns.org/ConnectedCity/updateAlerts/" + sensor["sensorID"][0], json=dataToUpdate)
+            requests.post("https://eclisson.duckdns.org/ConnectedCity/updateAlerts/" + sensor["sensorID"][0], headers=token_env.HEADERS, json=dataToUpdate)
