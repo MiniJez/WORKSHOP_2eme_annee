@@ -4,6 +4,12 @@ import ActionCard from '../../components/ActionCard'
 import Divider from '../../components/Divider'
 import Colors from '../../constants/Colors';
 import Images from '../../constants/Images'
+import { Button } from 'react-native-elements'
+import { logout } from '../../redux/actions/loginActions'
+import { sensor, sensorUpdate } from '../../redux/actions/sensorActions'
+import { connect } from 'react-redux'
+import { createLoadingSelector } from '../../redux/selectors/directSelectors'
+import { usePrevious } from '../../customHooks/usePrevious'
 
 let fakeData = [
     {
@@ -19,19 +25,33 @@ let fakeData = [
 ]
 
 
-const Home = () => {
+const Home = (props) => {
 
-    const [fakeDataState, setFakeDataState] = useState(fakeData);
+    const { logout, sensor, sensorUpdate, alert, loadingAlert } = props
+    const [fakeDataState, setFakeDataState] = useState(alert.alert);
+    const previousLoadingAlert = usePrevious(loadingAlert);
 
-    const onPress = (alert) => {
-        console.log(alert)
+    useEffect( () => {
+        sensor()
+    }, [])
+
+    useEffect( () => {
+        if(previousLoadingAlert && !loadingAlert && previousLoadingAlert !== loadingAlert) {
+            setFakeDataState(alert.alert);
+        }
+    }, [loadingAlert])
+
+
+    const onPress = (check) => {
         fakeDataState.forEach((value, index) => {
-            if(value.type === alert.type) {
+            if (value.alertType === check.alertType) {
                 let obj = [...fakeDataState]
                 obj[index].checked = !obj[index].checked
                 setFakeDataState(obj);
             }
         })
+        console.log('hey')
+        sensorUpdate(fakeDataState)
     }
 
     return (
@@ -44,22 +64,45 @@ const Home = () => {
             <View style={styles.actionContainer}>
                 <Text style={styles.actionTitle}>Actions requises</Text>
                 <Divider />
-                {fakeDataState.map((value, index) => {
-                    if(!value.checked) return <ActionCard key={index} alert={value} onPress={onPress} />
+                {fakeDataState && fakeDataState.map((value, index) => {
+                    if (!value.checked) return <ActionCard key={index} alert={value} onPress={onPress} />
                     else return null
                 })}
             </View>
             <View style={styles.actionContainer}>
                 <Text style={styles.actionTitle}>Actions traitées</Text>
                 <Divider />
-                {fakeDataState.map((value, index) => {
-                    if(value.checked) return <ActionCard key={index} alert={value} onPress={onPress} />
+                {fakeDataState && fakeDataState.map((value, index) => {
+                    if (value.checked) return <ActionCard key={index} alert={value} onPress={onPress} />
                     else return null
                 })}
             </View>
+            <Button
+                title="Deconnexion"
+                containerStyle={styles.button}
+                buttonStyle={{ backgroundColor: Colors.orange }}
+                onPress={() => logout()}
+            />
         </ScrollView>
     );
 };
+
+
+const mapStateToProps = state => ({
+    state, 
+    alert: state.sensorReducer,
+    loadingAlert: createLoadingSelector(['SENSOR'])(state)
+});
+
+
+const mapDispatchToProps = {
+    logout,
+    sensor,
+    sensorUpdate
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
 
 
 const styles = StyleSheet.create({
@@ -80,7 +123,11 @@ const styles = StyleSheet.create({
         height: '25%',
         bottom: 0,
         right: 0
+    },
+    button: {
+        position: 'absolute',
+        bottom: 0,
+        margin: 30,
+        borderRadius: 5
     }
 });
-
-export default Home;

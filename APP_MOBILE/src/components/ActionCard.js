@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native';
 import { Card, CheckBox } from 'react-native-elements'
 import Colors from '../constants/Colors';
+import { AlertString } from "../constants/AlertString"
 
 
 const ActionCard = ({ alert, onPress }) => {
     return (
         <Card containerStyle={styles.cardContainer}>
             <View style={styles.container}>
-                <Text>{alert.text}</Text>
+                <Text>{AlertString[alert.text]}</Text>
                 <CheckBox
                     checked={alert.checked}
                     onPress={() => onPress(alert)}

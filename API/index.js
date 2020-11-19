@@ -147,6 +147,7 @@ app.post('/getAlerts', async (req, res) => {
 
 app.post('/updateAlerts/:id', async (req, res) => {
     const { id } = req.params;
+    const { update } = req.body;
     try {
         await updateAlert(id, req.body);
         res.send('OK');
