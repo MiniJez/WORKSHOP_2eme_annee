@@ -52,9 +52,7 @@ const authUser = async (email, password) => {
             user = await User.create({email, password: hashedPassword});
         }
         console.log(user);
-        let token = jwt.sign({ id: user._id || user[0]._id }, process.env.JWT_SECRET, {
-            expiresIn: 86400 // expires in 24 hours
-        });
+        let token = jwt.sign({ id: user._id || user[0]._id }, process.env.JWT_SECRET);
         return token;
     } catch (error) {
         console.log(error);
