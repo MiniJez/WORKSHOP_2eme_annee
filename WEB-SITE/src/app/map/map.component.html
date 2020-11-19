@@ -4,8 +4,7 @@
             <div id="mainmap"></div>
         </div>
         <div class="column col-md-4">
-            {{selectedSensor}}
-            <app-details id="statsmap" [sensoridcomponent]=selectedSensor> </app-details>
+            <map-details [selectedSensor]=selectedSensor> </map-details>
         </div>
     </div>
 </div>

@@ -53,7 +53,6 @@ export class MapComponent implements OnInit {
     const alert = L.markerClusterGroup();
 
     // init header
-    console.log('token', token)
     const optionRequete = {
       headers: new HttpHeaders({
         'x-access-token': token.token
@@ -81,43 +80,84 @@ export class MapComponent implements OnInit {
     clusterbutton.addTo(map);
     alertbutton.addTo(map)
 
+    var iconGrey = L.icon({
+      iconUrl: '../../assets/icon-grey.jpg',
+      iconSize: [60, 50], // size of the icon
+      popupAnchor: [-12, -23] // [x, y]
+    });
+
+    var iconRed = L.icon({
+      iconUrl: '../../assets/icon-red.png',
+      iconSize: [60, 50], // size of the icon
+      popupAnchor: [-12, -23] // [x, y]
+    });
+
+    var iconOrange = L.icon({
+      iconUrl: '../../assets/icon-orange.png',
+      iconSize: [60, 50], // size of the icon
+      popupAnchor: [-12, -23] // [x, y]
+    });
+
+    var iconGreen = L.icon({
+      iconUrl: '../../assets/icon-green.png',
+      iconSize: [60, 50], // size of the icon
+      popupAnchor: [-12, -23] // [x, y]
+    });
+
+    var iconColor = [iconGrey, iconGreen, iconOrange, iconRed]
+
     // api call Alert
-    var body = { "sort": { "Temperature": "Il fait trop froid : isolez vos murs" } }
+    var body = {
+      "sort": {
+        "alertType": { "$in": ["PM25", "Temperature", "Humidite"] }
+      }
+    }
+
     this.http.post<any>(`https://eclisson.duckdns.org/ConnectedCity/getAlerts`, body, optionRequete).subscribe(Response => {
       console.log(Response)
-
-      Response.forEach((element: { Sensors: any; }) => {
-        var sensors = element.Sensors
-        sensors.forEach((item: { lat: number; lon: number; address: string; sensorID: string; }) => {
-          const marker = L.marker([item.lat, item.lon])
-            .bindPopup(`
-            <p>Adresse : ${item.address}</p>
-            <a href="/details/${item.sensorID}">Plus d'information</a>
-            `)
-          marker.on('click', () => { this.selectedSensor = item.sensorID[0]; console.log(this.selectedSensor) });
-          alert.addLayer(marker);
+      // iterate on result
+      Response.forEach((element: { Sensors: any; alert: any }) => {
+        var alertItem = element.alert
+        var col = 0
+        alertItem.forEach((al: { alertType: string; checked: boolean }) => {
+          if (al.alertType != "CO2" && al.checked == false) {
+            col++
+          }
         })
+        // iterate on sensor
+        var sensors = element.Sensors[0]
+        const marker = L.marker([sensors.lat, sensors.lon], { icon: iconColor[col] })
+          .bindPopup(`
+            <p>Adresse : ${sensors.address}</p>
+            <a href="/details/${sensors.sensorID}">Plus d'information</a>
+            `)
+        marker.on('click', () => {
+          this.selectedSensor = sensors
+        });
+        alert.addLayer(marker);
       });
     });
 
     // api call Get all
     this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getSensors`, optionRequete).subscribe(Response => {
       Response.forEach((element: { lat: number; lon: number; address: string; sensorID: string }) => {
-        const marker = L.marker([element.lat, element.lon])
+        const marker = L.marker([element.lat, element.lon], { icon: iconColor[0] })
           .bindPopup(`
             <p>Adresse : ${element.address}</p>
             <a href="/details/${element.sensorID}">Plus d'information</a>
           `);
-        marker.on('click', () => { this.selectedSensor = element.sensorID[0]; console.log(this.selectedSensor) });
-        // markers.addLayer(marker);
+        marker.on('click', () => {
+          this.selectedSensor = element
+        });
         cluster.addLayer(marker);
-
       });
       this.spinner.hide();
     });
 
     // add the clusters
     map.addLayer(cluster);
-
+    map.on('click', () => {
+      this.selectedSensor = undefined
+    })
   }
 }

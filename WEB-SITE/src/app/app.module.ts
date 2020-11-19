@@ -9,13 +9,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DetailsComponent } from './details/details.component';
 import { MapComponent } from './map/map.component';
 import { NgxSpinnerModule } from "ngx-spinner";
+import { MapDetailsComponent } from './map-details/map-details.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     DetailsComponent,
-    MapComponent
+    MapComponent,
+    MapDetailsComponent
   ],
   imports: [
     BrowserModule,

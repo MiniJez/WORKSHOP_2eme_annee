@@ -1,0 +1,10 @@
+<div *ngIf="selectedSensor != undefined; then mapSensorDetails else mapGlobalDetails"></div>
+<ng-template #mapSensorDetails>
+    <h1>Capteur selectionné : <span id="sensorid">{{sensorID}}</span></h1>
+    <h2>Adresse : <span id="addressid">{{address}}</span></h2>
+</ng-template>
+
+<ng-template #mapGlobalDetails>
+    <h1>Capteurs avec alerte isolation</h1>
+    <div id="chartAlert"></div>
+</ng-template>
