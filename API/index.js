@@ -169,6 +169,7 @@ app.post('/insertAlerts', async (req, res) => {
 app.get('/getStats', async (req, res) => {
     try {
         let stats = await getStats();
+        console.log(stats)
         res.send(stats);
     } catch (error) {
         console.log(error);
