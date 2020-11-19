@@ -175,7 +175,7 @@ const getAlertInfos = async (id) => {
 const updateAlert = async (id, update) => {
     try {
         console.log("updateAlerts/:id");
-        await Alert.findOneAndUpdate({ sensorID: id }, update, { useFindAndModify: false });
+        await Alert.findOneAndUpdate({ SensorID: id }, update, { useFindAndModify: false });
         console.log("done");
     } catch (error) {
         console.log(error);
@@ -186,7 +186,7 @@ const updateAlert = async (id, update) => {
 const insertAlert = async (alert) => {
     try {
         console.log("insertAlerts/");
-        //await Alert.create(alert);
+        await Alert.create(alert);
         mqttEmitter.emit('SendMqttNotif', alert);
         console.log("done");
     } catch (error) {
