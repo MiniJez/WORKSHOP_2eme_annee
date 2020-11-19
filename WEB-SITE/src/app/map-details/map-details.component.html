@@ -2,9 +2,21 @@
 <ng-template #mapSensorDetails>
     <h1>Capteur selectionné : <span id="sensorid">{{sensorID}}</span></h1>
     <h2>Adresse : <span id="addressid">{{address}}</span></h2>
+    <div id="charttemp"></div>
+    <div id="charthumi"></div>
+    <div id="chartco2"></div>
+    <div id="chartppm25"></div>
 </ng-template>
 
 <ng-template #mapGlobalDetails>
-    <h1 class="font-brown arvo">Capteurs avec alerte isolation</h1>
+    <h1>Informations globales</h1>
+    <br><br>
+    <h3>Nombre de capteurs : {{nbSensor}}</h3>
+    <br>
+    <h3>Capteurs avec alerte(s) : {{nbAlert}}</h3>
+    <br>
     <div id="chartAlert"></div>
+    <br>
+    <h3>Données reçus des capteurs : {{nbRawData}}</h3>
+    <br>
 </ng-template>
