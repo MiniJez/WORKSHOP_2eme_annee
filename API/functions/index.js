@@ -207,6 +207,18 @@ const getStats = async () => {
 }
 
 
+const getLatestRawData = async (id) => {
+    try {
+        console.log('getLatestRawData/:id');
+        let rawData = RawData.find({sensorID: id}).sort({_id: -1}).limit(1);
+        console.log('done');
+        return rawData;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 module.exports.getAllSensorsData = getAllSensorsData;
 module.exports.getAllUserID = getAllUserID;
 module.exports.getUserInfo = getUserInfo;
@@ -219,3 +231,4 @@ module.exports.getStats = getStats;
 module.exports.getAlertInfosSort = getAlertInfosSort;
 module.exports.authUser = authUser;
 module.exports.verifyToken = verifyToken;
+module.exports.getLatestRawData = getLatestRawData;

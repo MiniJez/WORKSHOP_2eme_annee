@@ -13,7 +13,7 @@ app.use(cors());
 
 
 // IMPORTS
-const { getAllSensorsData, getAllUserID, getUserInfo, getSensorInfos, getAlertInfos, updateAlert, insertAlert, getRawData, getStats, getAlertInfosSort, authUser, verifyToken } = require('./functions');
+const { getLatestRawData, getAllSensorsData, getAllUserID, getUserInfo, getSensorInfos, getAlertInfos, updateAlert, insertAlert, getRawData, getStats, getAlertInfosSort, authUser, verifyToken } = require('./functions');
 const { handleConnection } = require('./connection');
 
 
@@ -106,6 +106,17 @@ app.get('/getRawData/:id', async (req, res) => {
     try {
         let sensorInfos = await getSensorInfos(id);
         res.send(sensorInfos);
+    } catch (error) {
+        console.log(error);
+        res.send(error);
+    }
+})
+
+app.get('/getLatestRawData/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        let rawData = await getLatestRawData(id);
+        res.send(rawData)
     } catch (error) {
         console.log(error);
         res.send(error);
