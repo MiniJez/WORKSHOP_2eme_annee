@@ -7,6 +7,10 @@
   transform: translate(-50%, -50%);
 }
 
+:host body{
+    overflow: hidden;
+}
+
 ::-moz-selection { /* Code for Firefox */
     color: rgb(84,28,29);
     background: #fecb5e;
