@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, Input, OnInit, NgZone } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from "ngx-spinner";
 
@@ -84,7 +84,11 @@ export class DetailsComponent implements OnInit {
           columns: [
             this.time,
             this.temp_data
-          ]
+          ],
+          colors: {
+            Time: '#541c1d',
+            temperature: '#541c1d',
+          },
         },
         subchart: {
           show: true
@@ -106,7 +110,11 @@ export class DetailsComponent implements OnInit {
           columns: [
             this.time,
             this.humidity_data
-          ]
+          ],
+          colors: {
+            Time: '#541c1d',
+            humidity: '#541c1d',
+          },
         },
         subchart: {
           show: true
@@ -128,7 +136,11 @@ export class DetailsComponent implements OnInit {
           columns: [
             this.time,
             this.C02_data
-          ]
+          ],
+          colors: {
+            Time: '#541c1d',
+            C02: '#541c1d',
+          },
         },
         subchart: {
           show: true
@@ -150,7 +162,11 @@ export class DetailsComponent implements OnInit {
           columns: [
             this.time,
             this.PM25_data
-          ]
+          ],
+          colors: {
+            Time: '#541c1d',
+            PM25: '#541c1d',
+          },
         },
         subchart: {
           show: true

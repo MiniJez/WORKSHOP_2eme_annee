@@ -68,13 +68,6 @@
     color: #541c1d;
 }
 
-.arvo{
-    font-family: Arvo;
-}
-
-.font-brown{
-    color: #541c1d;
-}
 .font-brown::placeholder{
     color: rgba(84,28,29,0.5);
 }
