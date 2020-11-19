@@ -1,0 +1,31 @@
+<div *ngIf="selectedSensor != undefined; then mapSensorDetails else mapGlobalDetails"></div>
+<!-- <div class="font-brown arvo"> -->
+<ng-template #mapSensorDetails>
+    <h1 class="font-brown arvo">Capteur selectionné : <span id="sensorid">{{sensorID}}</span></h1>
+    <h2>Adresse : <span id="addressid">{{address}}</span></h2>
+    <div id="charttemp"></div>
+    <div id="charthumi"></div>
+    <div id="chartco2"></div>
+    <div id="chartppm25"></div>
+</ng-template>
+
+<ng-template #mapGlobalDetails>
+    <h1>Informations globales</h1>
+    <br><br>
+    <h4>Données reçus des capteurs : {{nbRawData}}</h4>
+    <br>
+    <h4>Nombre de capteurs : {{nbSensor}}</h4>
+    <br>
+    <h4>Capteurs avec alerte(s) : {{nbAlert}}</h4>
+    <br>
+    <div id="chartAlert"></div>
+    <br>
+    <hr>
+    <h3 style="text-align: center;">Alertes Total : {{nbAlert}}</h3>
+    <h4>Alertes non résolus : {{nbAlert - alertCheckedCount}}</h4>
+    <h4>Alertes résolus : {{alertCheckedCount}}</h4>
+    <br>
+    <div id="chartAlertResolved"></div>
+    <br>
+</ng-template>
+<!-- </div> -->

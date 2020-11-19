@@ -1,0 +1,126 @@
+
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.loginBody {
+  height: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+::-moz-selection { /* Code for Firefox */
+    color: rgb(84,28,29);
+    background: #fecb5e;
+  }
+  
+  ::selection {
+    color:  rgb(84,28,29);
+    background: rgba(254, 203, 94, 0.8);
+  }
+
+.form-signin {
+    width: 100%;
+    max-width: 330px;
+    min-width: 300px;
+    padding: 30px;
+    margin: 0 auto;
+    border: none;
+    background-color: #ffbd8d;
+    border-radius: 60px 60px 30px 30px;
+
+    margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border: none;
+}
+
+.form-signin .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #ffbd8d;
+}
+
+.form-signin .form-control:focus {
+    background-color: rgba(84,28,29,0.1);
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border: none;
+    border-top: 1px solid rgba(84,28,29,0.3);
+}
+
+.form-signin .checkbox {
+    font-weight: 400;
+}
+
+.form-signin .form-control ::placeholder {
+    color: #541c1d;
+}
+
+.font-brown::placeholder{
+    color: rgba(84,28,29,0.5);
+}
+
+.secondary-color{
+    background-color: #e87e45;
+    border-color: #e87e45;
+}
+
+.secondary-color:hover{
+    background-color: #b03409;
+    border-color: #b03409;
+}
+
+.image{
+    position: absolute;
+    z-index: -1;
+}
+
+.img1{
+    top: 35%;
+    left: 75%;
+    transform: translate(-10%, -100%);
+}
+.img2{
+    transform: rotate(180deg) translate(-100%, -20%);
+}
+.img3{
+    top: 0%;
+    left: 0%;
+    transform: translate(-50%, 50%);
+}
+.img4{
+    transform: rotate(97deg) translate(82%, -80%);
+
+}
+.img5{
+    transform: translate(100%, 20%);
+}
+.img6{
+    top: 0%;
+    left: 0%;
+    transform: translate(-60%, -65%);
+}
+.img7{
+    top: 0%;
+    left: 0%;
+    transform: translate(50%, 89%);
+}
