@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
 import * as c3 from 'c3';
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -13,23 +14,30 @@ export class MapDetailsComponent implements OnInit {
   constructor(
     public http: HttpClient,
     private spinner: NgxSpinnerService,
+    private router: Router,
   ) { }
   public sensorID: String = "";
   public address: String = "";
   public nbSensor: number = 0;
   public nbRawData: number = 0;
   public nbAlert: number = 0;
+  public alertCheckedCount: number = 0;
+  //indiv charts 
+  public chartppm25: any;
+  public charthumi: any;
+  public charttemp: any;
+  public chartco2: any;
+
+  public selectedSensorStats: any = {
+    "temp": 0,
+    "humidity": 0,
+    "C02": 0,
+    "PM25": 0
+  };
+
   @Input() selectedSensor: any;
 
-
   ngOnInit() {
-  }
-
-  async getToken() {
-    var email = "edouard.clisson@epsi.fr"
-    var pswd = "test"
-    var body = { "email": email, "password": pswd }
-    return this.http.post<any>(`https://eclisson.duckdns.org/ConnectedCity/login`, body).toPromise();
   }
 
   createGauges() {
@@ -53,11 +61,33 @@ export class MapDetailsComponent implements OnInit {
         height: 180
       }
     });
-    var charttemp = c3.generate({
+
+    var chartAlertResolved = c3.generate({
+      bindto: '#chartAlertResolved',
+      data: {
+        columns: [
+          ['Pourcentage d\'alertes résolus', ((this.nbAlert - this.alertCheckedCount) / this.nbAlert) * 100]
+        ],
+        type: 'gauge',
+      },
+      color: {
+        pattern: ['#60B044', '#F6C600', '#F97600', '#FF0000'], // the three color levels for the percentage values.
+        threshold: {
+          unit: 'value', // percentage is default
+          max: 100, // 100 is default
+          values: [20, 40, 60, 80]
+        }
+      },
+      size: {
+        height: 180
+      }
+    });
+
+    this.charttemp = c3.generate({
       bindto: '#charttemp',
       data: {
         columns: [
-          ['Temperature', Math.floor(Math.random() * 50) + 1]
+          ['Temperature', parseInt(this.selectedSensorStats.temp)]
         ],
         type: 'gauge',
       },
@@ -66,7 +96,7 @@ export class MapDetailsComponent implements OnInit {
           format: function (value, ratio) {
             return value;
           },
-          show: false // to turn off the min/max labels.
+          show: true // to turn off the min/max labels.
         },
         min: -10, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
         max: 50, // 100 is default
@@ -76,7 +106,7 @@ export class MapDetailsComponent implements OnInit {
       color: {
         pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
         threshold: {
-          unit: 'value', // percentage is default
+          unit: '°C', // percentage is default
           max: 200, // 100 is default
           values: [30, 60, 90, 100]
         }
@@ -85,11 +115,11 @@ export class MapDetailsComponent implements OnInit {
         height: 180
       }
     });
-    var charthumi = c3.generate({
+    this.charthumi = c3.generate({
       bindto: '#charthumi',
       data: {
         columns: [
-          ['Humidity', Math.floor(Math.random() * 100) + 1]
+          ['Humidity', parseInt(this.selectedSensorStats.humidity)]
         ],
         type: 'gauge',
       },
@@ -98,7 +128,7 @@ export class MapDetailsComponent implements OnInit {
           format: function (value, ratio) {
             return value;
           },
-          show: false // to turn off the min/max labels.
+          show: true // to turn off the min/max labels.
         },
         min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
         max: 100, // 100 is default
@@ -108,7 +138,7 @@ export class MapDetailsComponent implements OnInit {
       color: {
         pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
         threshold: {
-          unit: 'value', // percentage is default
+          unit: '%', // percentage is default
           max: 200, // 100 is default
           values: [30, 60, 90, 100]
         }
@@ -117,11 +147,11 @@ export class MapDetailsComponent implements OnInit {
         height: 180
       }
     });
-    var chartco2 = c3.generate({
+    this.chartco2 = c3.generate({
       bindto: '#chartco2',
       data: {
         columns: [
-          ['CO2', Math.floor(Math.random() * 5000) + 1]
+          ['CO2', parseInt(this.selectedSensorStats.C02)]
         ],
         type: 'gauge',
       },
@@ -130,7 +160,7 @@ export class MapDetailsComponent implements OnInit {
           format: function (value, ratio) {
             return value;
           },
-          show: false // to turn off the min/max labels.
+          show: true // to turn off the min/max labels.
         },
         min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
         max: 5000, // 100 is default
@@ -140,7 +170,7 @@ export class MapDetailsComponent implements OnInit {
       color: {
         pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
         threshold: {
-          unit: 'value', // percentage is default
+          unit: 'PPM', // percentage is default
           max: 200, // 100 is default
           values: [30, 60, 90, 100]
         }
@@ -149,11 +179,11 @@ export class MapDetailsComponent implements OnInit {
         height: 180
       }
     });
-    var chartppm25 = c3.generate({
+    this.chartppm25 = c3.generate({
       bindto: '#chartppm25',
       data: {
         columns: [
-          ['Particules fines', Math.floor(Math.random() * 500) + 1]
+          ['Particules', parseInt(this.selectedSensorStats.PM25)]
         ],
         type: 'gauge',
       },
@@ -162,7 +192,7 @@ export class MapDetailsComponent implements OnInit {
           format: function (value, ratio) {
             return value;
           },
-          show: false // to turn off the min/max labels.
+          show: true // to turn off the min/max labels.
         },
         min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
         max: 500, // 100 is default
@@ -172,7 +202,7 @@ export class MapDetailsComponent implements OnInit {
       color: {
         pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
         threshold: {
-          unit: 'value', // percentage is default
+          unit: 'PPM', // percentage is default
           max: 200, // 100 is default
           values: [30, 60, 90, 100]
         }
@@ -183,56 +213,87 @@ export class MapDetailsComponent implements OnInit {
     });
   }
 
-  async getStats(token: { token: any; }) {
+  async getStats() {
     // init header
     const optionRequete = {
       headers: new HttpHeaders({
-        'x-access-token': token.token
+        'x-access-token': String(localStorage.getItem("tokenLogin"))
       })
     };
     return this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getStats`, optionRequete).toPromise()
   }
 
+
+  async getStatsForSensor() {
+    // init header
+    const optionRequete = {
+      headers: new HttpHeaders({
+        'x-access-token': String(localStorage.getItem("tokenLogin"))
+      })
+    };
+    return this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getLatestRawData/` + this.sensorID, optionRequete).toPromise();
+  }
+
   async ngOnChanges(changes: SimpleChanges) {
-    let token = await this.getToken();
-    let stats = await this.getStats(token);
+    if (localStorage.getItem("tokenLogin") == null) {
+      this.router.navigate(['/login'])
+    } else {
+      let stats = await this.getStats();
+      console.log(stats)
+      this.nbSensor = stats.sensorsCount
+      this.nbRawData = stats.rawDataCount
+      this.nbAlert = parseInt(stats.totalAlertsCount[0].count + stats.totalAlertsCount[1].count)
+      this.alertCheckedCount = parseInt(stats.totalAlertsCount[1].count)
 
-    this.nbSensor = stats.sensorsCount
-    this.nbRawData = stats.rawDataCount
-    this.nbAlert = stats.alertsCount
-
-    if (this.selectedSensor != undefined) {
-      this.sensorID = this.selectedSensor.sensorID
-      this.address = this.selectedSensor.address
-    }
-
-    /*  await this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getRawData/` + this.selectedSensor.sensorID, optionRequete).subscribe(Response => {
-        console.log(Response.length)
-        let v = 0
-        let i = 1;
-        if (Response.length > 5000) {
-          i = 2
-        }
-        if (Response.length > 10000) {
-          i = 3
-        }
-  
-        Response.forEach((element: { humidity: string; C02: string; PM25: string; temp: string; time: any }) => {
-          if (v / 3 != 0) {
-            this.time.push(new Date(parseInt(element.time)))
-            this.humidity_data.push(parseFloat(element.humidity));
-            this.C02_data.push(parseInt(element.C02));
-            this.PM25_data.push(parseInt(element.PM25));
-            this.temp_data.push(parseFloat(element.temp));
-          }
-          v++;
+      if (this.selectedSensor != undefined) {
+        this.sensorID = this.selectedSensor.sensorID
+        this.address = this.selectedSensor.address
+        this.selectedSensorStats = await this.getStatsForSensor();
+        console.log(this.selectedSensorStats)
+        this.charttemp.load({
+          // unload: true,
+          columns: ['Temperature', parseInt(this.selectedSensorStats.temp)]
         });
-        console.log(this.humidity_data);
-        console.log(Response.length / i)
-        this.spinner.hide();
-  
-      });*/
-
-    this.createGauges()
+        this.charthumi.load({
+          // unload: true,
+          columns: ['Humidity', parseInt(this.selectedSensorStats.humidity)]
+        });
+        this.charthumi.load({
+          // unload: true,
+          columns: ['CO2', parseInt(this.selectedSensorStats.C02)]
+        });
+        this.chartppm25.load({
+          //unload: true,
+          columns: ['Particules', parseInt(this.selectedSensorStats.PM25)]
+        });
+      }
+      /*  await this.http.get<any>(`https://eclisson.duckdns.org/ConnectedCity/getRawData/` + this.selectedSensor.sensorID, optionRequete).subscribe(Response => {
+          console.log(Response.length)
+          let v = 0
+          let i = 1;
+          if (Response.length > 5000) {
+            i = 2
+          }
+          if (Response.length > 10000) {
+            i = 3
+          }
+    
+          Response.forEach((element: { humidity: string; C02: string; PM25: string; temp: string; time: any }) => {
+            if (v / 3 != 0) {
+              this.time.push(new Date(parseInt(element.time)))
+              this.humidity_data.push(parseFloat(element.humidity));
+              this.C02_data.push(parseInt(element.C02));
+              this.PM25_data.push(parseInt(element.PM25));
+              this.temp_data.push(parseFloat(element.temp));
+            }
+            v++;
+          });
+          console.log(this.humidity_data);
+          console.log(Response.length / i)
+          this.spinner.hide();
+    
+        });*/
+      this.createGauges()
+    }
   }
 }

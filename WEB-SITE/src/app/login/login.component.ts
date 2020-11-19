@@ -24,20 +24,22 @@ export class LoginComponent {
     private zone: NgZone
     ){}
 
-  async getToken(email : any, password : any) {
+  async ngOnInit() {
+    console.log(localStorage.getItem("tokenLogin"))
+    if (localStorage.getItem("tokenLogin") != null) {
+      this.router.navigate(['/map'])
+    }
+  }
+
+  async getToken(email: any, password: any) {
     var body = { "email": email, "password": password }
     return this.http.post<any>(`https://eclisson.duckdns.org/ConnectedCity/login`, body).toPromise();
   }
 
   async onSubmit() {
-    console.warn(this.loginForm.value);
-    //let myToken = await this.getToken(this.loginForm.value.email, this.loginForm.value.password)
-    //if(myToken.token != null){
-    if((this.loginForm.value.email == "meerky@example.fr")&&(this.loginForm.value.password == "test") ) {
-      //console.warn(myToken);
-      const navigationDetails: string[] = ['/map'];
-      this.router.navigate(navigationDetails)
-    }
+    let myToken = await this.getToken(this.loginForm.value.email, this.loginForm.value.password)
+    localStorage.setItem("tokenLogin", myToken.token)
+    const navigationDetails: string[] = ['/map'];
+    this.router.navigate(navigationDetails)
   }
-
 }
