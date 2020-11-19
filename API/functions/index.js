@@ -199,8 +199,9 @@ const getStats = async () => {
         let rawDataCount = await RawData.estimatedDocumentCount();
         let sensorsCount = await Sensors.estimatedDocumentCount();
         let alertsCount = await Alert.estimatedDocumentCount();
+        let alertCheckedCount = await Alert.find({alert: {$elemMatch: {checked: true}}}).count()
         console.log("done");
-        return ({ rawDataCount, sensorsCount, alertsCount });
+        return ({ rawDataCount, sensorsCount, alertsCount, alertCheckedCount });
     } catch (error) {
         console.log(error);
     }
