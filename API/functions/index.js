@@ -133,7 +133,7 @@ const getAlertInfosSort = async (sort) => {
         const docs = await Alert.aggregate([
             {
                 $match: {
-                    [entries[0]]: entries[1]
+                    alert: {$elemMatch: {[entries[0]]: entries[1]}}
                 }
             },
             {
