@@ -44,7 +44,7 @@ def ia_process():
 
             # Récupération de la dernière exécution du capteur
             lastExecution = rawList[0]
-            s, ms = divmod(int(lastExecution["time"]), 1000)
+            # s, ms = divmod(int(lastExecution["time"]), 1000)
 
             # Vérification des différentes alertes
             pm25Alert = pm25_execution_process(lastExecution["PM25"])
