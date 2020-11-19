@@ -2,10 +2,11 @@ const mongoose = require('mongoose');
 
 
 const AlertSchema = new mongoose.Schema({
-    CO2: String,
-    Humidite: String,
-    Temperature: String,
-    PM25: String,
+    alert: [{
+        alertType: String,
+        text: String,
+        checked: Boolean
+    }],
     SensorID: String
 })
 

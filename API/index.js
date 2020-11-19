@@ -13,7 +13,7 @@ app.use(cors());
 
 
 // IMPORTS
-const { getAllSensorsData, getAllUserID, getUserInfo, getSensorInfos, getAlertInfos, updateAlert, insertAlert, getRawData, getStats, getAlertInfosSort, authUser, verifyToken } = require('./functions');
+const { getLatestRawData, getAllSensorsData, getAllUserID, getUserInfo, getSensorInfos, getAlertInfos, updateAlert, insertAlert, getRawData, getStats, getAlertInfosSort, authUser, verifyToken } = require('./functions');
 const { handleConnection } = require('./connection');
 
 
@@ -112,6 +112,17 @@ app.get('/getRawData/:id', async (req, res) => {
     }
 })
 
+app.get('/getLatestRawData/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        let rawData = await getLatestRawData(id);
+        res.send(rawData)
+    } catch (error) {
+        console.log(error);
+        res.send(error);
+    }
+})
+
 app.get('/getAlerts/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -136,10 +147,8 @@ app.post('/getAlerts', async (req, res) => {
 
 app.post('/updateAlerts/:id', async (req, res) => {
     const { id } = req.params;
-    const { update } = req.body;
-    console.log(update, id)
     try {
-        await updateAlert(id, update);
+        await updateAlert(id, req.body);
         res.send('OK');
     } catch (error) {
         console.log(error);
@@ -148,9 +157,8 @@ app.post('/updateAlerts/:id', async (req, res) => {
 })
 
 app.post('/insertAlerts', async (req, res) => {
-    const { alert } = req.body;
     try {
-        await insertAlert(alert);
+        await insertAlert(req.body);
         res.send('OK');
     } catch (error) {
         console.log(error);
@@ -161,6 +169,7 @@ app.post('/insertAlerts', async (req, res) => {
 app.get('/getStats', async (req, res) => {
     try {
         let stats = await getStats();
+        console.log(stats)
         res.send(stats);
     } catch (error) {
         console.log(error);

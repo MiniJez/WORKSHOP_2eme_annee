@@ -30,9 +30,9 @@ const verifyToken = async (token, res) => {
             if (err) resolve(res.status(500).send({ auth: false, message: 'Failed to authenticate token.' }));
             console.log(decoded)
             User.findById(decoded.id, (err, response) => {
-                if(err) resolve(res.status(500).send({ auth: false, message: 'Failed to authenticate user.' }));
+                if (err) resolve(res.status(500).send({ auth: false, message: 'Failed to authenticate user.' }));
                 console.log(response);
-                if(!response) {
+                if (!response) {
                     resolve(res.status(401).send({ auth: false, message: 'Auth failed' }));
                 }
                 resolve();
@@ -46,15 +46,13 @@ const authUser = async (email, password) => {
     try {
         console.log("login/");
         let hashedPassword = sha512(password);
-        let user = await User.find({email, password: hashedPassword});
-        if(!user.length || !user) {
+        let user = await User.find({ email, password: hashedPassword });
+        if (!user.length || !user) {
             console.log('create user')
-            user = await User.create({email, password: hashedPassword});
+            user = await User.create({ email, password: hashedPassword });
         }
         console.log(user);
-        let token = jwt.sign({ id: user._id || user[0]._id }, process.env.JWT_SECRET, {
-            expiresIn: 86400 // expires in 24 hours
-        });
+        let token = jwt.sign({ id: user._id || user[0]._id }, process.env.JWT_SECRET);
         return token;
     } catch (error) {
         console.log(error);
@@ -133,7 +131,7 @@ const getAlertInfosSort = async (sort) => {
         const docs = await Alert.aggregate([
             {
                 $match: {
-                    [entries[0]]: entries[1]
+                    alert: { $elemMatch: { [entries[0]]: entries[1] } }
                 }
             },
             {
@@ -143,7 +141,7 @@ const getAlertInfosSort = async (sort) => {
                     foreignField: 'sensorID',
                     as: 'RawData'
                 }
-            }, 
+            },
             {
                 $lookup: {
                     from: 'Sensors',
@@ -163,7 +161,7 @@ const getAlertInfosSort = async (sort) => {
 const getAlertInfos = async (id) => {
     try {
         console.log("getAlerts/:id");
-        let doc = await Alert.find({SensorID: id});
+        let doc = await Alert.find({ SensorID: id });
         console.log("done");
         return doc;
     } catch (error) {
@@ -175,7 +173,7 @@ const getAlertInfos = async (id) => {
 const updateAlert = async (id, update) => {
     try {
         console.log("updateAlerts/:id");
-        await Alert.findOneAndUpdate({ sensorID: id }, update, { useFindAndModify: false });
+        await Alert.findOneAndUpdate({ SensorID: id }, update, { useFindAndModify: false });
         console.log("done");
     } catch (error) {
         console.log(error);
@@ -186,7 +184,7 @@ const updateAlert = async (id, update) => {
 const insertAlert = async (alert) => {
     try {
         console.log("insertAlerts/");
-        //await Alert.create(alert);
+        await Alert.create(alert);
         mqttEmitter.emit('SendMqttNotif', alert);
         console.log("done");
     } catch (error) {
@@ -201,8 +199,29 @@ const getStats = async () => {
         let rawDataCount = await RawData.estimatedDocumentCount();
         let sensorsCount = await Sensors.estimatedDocumentCount();
         let alertsCount = await Alert.estimatedDocumentCount();
+        let totalAlertsCount = await Alert.aggregate([
+            { "$unwind": "$alert" },
+            {
+                "$group": {
+                    "_id": "$alert.checked",
+                    "count": { "$sum": 1 }
+                }
+            }
+        ]);
         console.log("done");
-        return ({ rawDataCount, sensorsCount, alertsCount });
+        return ({ rawDataCount, sensorsCount, alertsCount, totalAlertsCount });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const getLatestRawData = async (id) => {
+    try {
+        console.log('getLatestRawData/:id');
+        let rawData = RawData.find({ sensorID: id }).sort({ _id: -1 }).limit(1);
+        console.log('done');
+        return rawData;
     } catch (error) {
         console.log(error);
     }
@@ -221,3 +240,4 @@ module.exports.getStats = getStats;
 module.exports.getAlertInfosSort = getAlertInfosSort;
 module.exports.authUser = authUser;
 module.exports.verifyToken = verifyToken;
+module.exports.getLatestRawData = getLatestRawData;
