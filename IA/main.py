@@ -26,13 +26,8 @@ def ia_process():
     # Récupération des capteurs => /getSensors
     sensorsDataResponse = requests.get("https://eclisson.duckdns.org/ConnectedCity/getSensors", headers=env_var.HEADERS)
     sensorsData = json.loads(sensorsDataResponse.text)
-    maxCount = 50
-    count = 0
     # Pour chaque capteur dans la base de données
     for sensor in sensorsData:
-        print(count)
-        if count == maxCount:
-            break
         print("Sensor ID : " + sensor["sensorID"][0])
 
         # Récupération des executions des capteurs => /getSensors/:id => 062336c2-d39b-42cf-a8bb-1d05de74bd7e
@@ -65,10 +60,9 @@ def ia_process():
                 print("Insertion des alertes en base de données")
                 # S'il n'y a aucune alerte référencée en base de données pour ce capteur, alors on insère en BDD les alertes détectées
                 AlertClass.insertAlerts(sensor, co2Alert, pm25Alert, humidityAlert, temperatureAlert)
-        count = count + 1
-    # s.enter(600, 1, ia_process, ())
+    s.enter(600, 1, ia_process, ())
 
-# s.enter(600, 1, ia_process, (s,))
-# s.run()
+s.enter(600, 1, ia_process, (s,))
+s.run()
 
 ia_process()
