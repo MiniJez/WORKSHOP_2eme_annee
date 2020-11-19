@@ -1,4 +1,4 @@
-import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT_SUCCESS } from '../actionsTypes/loginAction'
+import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT_SUCCESS, SET_TOKEN } from '../actionsTypes/loginAction'
 
 
 const initialState = {
@@ -17,6 +17,13 @@ const loginReducer = (state = initialState, action) => {
 
         case LOGOUT_SUCCESS:
             return initialState
+
+        case SET_TOKEN:
+            return {
+                ...state,
+                token: action.payload
+            }
+        
         default:
             return state;
     }

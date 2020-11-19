@@ -1,4 +1,4 @@
-import { LOGIN_REQUEST, LOGIN_FAILURE, LOGIN_SUCCESS, LOGOUT_REQUEST, LOGOUT_SUCCESS } from '../actionsTypes/loginAction'
+import { LOGIN_REQUEST, LOGIN_FAILURE, LOGIN_SUCCESS, LOGOUT_REQUEST, LOGOUT_SUCCESS, SET_TOKEN } from '../actionsTypes/loginAction'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const login = (email, password) => {
@@ -38,5 +38,11 @@ export const logout = () => {
         }).catch((error => {
             dispatch({ type: LOGOUT_FAILURE, payload: error });
         }))
+    }
+}
+
+export const setToken = (token) => {
+    return (dispatch) => {
+        dispatch({type: SET_TOKEN, payload: token});
     }
 }
