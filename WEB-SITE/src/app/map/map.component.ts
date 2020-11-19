@@ -46,10 +46,10 @@ export class MapComponent implements OnInit {
       legend.onAdd = function () {
         var div = L.DomUtil.create("div", "legend");
         div.innerHTML += "<h4>Légende</h4>";
-        div.innerHTML += '<img src="../../assets/icon-grey.jpg" width="30" height="25"><span>Capteur</span><br>';
-        div.innerHTML += '<img src="../../assets/icon-green.png" width="30" height="25"><span>Capteur avec 1 alerte</span><br>';
-        div.innerHTML += '<img src="../../assets/icon-orange.png" width="30" height="25"><span>Capteur avec 2 alertes</span><br>';
-        div.innerHTML += '<img src="../../assets/icon-red.png" width="30" height="25"><span>Capteur avec 3 alertes</span><br>';
+        div.innerHTML += '<img src="assets/icon-grey.jpg" width="30" height="25"><span>Capteur</span><br>';
+        div.innerHTML += '<img src="assets/icon-green.png" width="30" height="25"><span>Capteur avec 1 alerte</span><br>';
+        div.innerHTML += '<img src="assets/icon-orange.png" width="30" height="25"><span>Capteur avec 2 alertes</span><br>';
+        div.innerHTML += '<img src="assets/icon-red.png" width="30" height="25"><span>Capteur avec 3 alertes</span><br>';
 
         return div;
       };
@@ -86,25 +86,25 @@ export class MapComponent implements OnInit {
       alertbutton.addTo(map)
 
       var iconGrey = L.icon({
-        iconUrl: '../../assets/icon-grey.jpg',
+        iconUrl: 'assets/icon-grey.jpg',
         iconSize: [60, 50], // size of the icon
         popupAnchor: [-12, -23] // [x, y]
       });
 
       var iconRed = L.icon({
-        iconUrl: '../../assets/icon-red.png',
+        iconUrl: 'assets/icon-red.png',
         iconSize: [60, 50], // size of the icon
         popupAnchor: [-12, -23] // [x, y]
       });
 
       var iconOrange = L.icon({
-        iconUrl: '../../assets/icon-orange.png',
+        iconUrl: 'assets/icon-orange.png',
         iconSize: [60, 50], // size of the icon
         popupAnchor: [-12, -23] // [x, y]
       });
 
       var iconGreen = L.icon({
-        iconUrl: '../../assets/icon-green.png',
+        iconUrl: 'assets/icon-green.png',
         iconSize: [60, 50], // size of the icon
         popupAnchor: [-12, -23] // [x, y]
       });
@@ -124,8 +124,8 @@ export class MapComponent implements OnInit {
         Response.forEach((element: { Sensors: any; alert: any }) => {
           var alertItem = element.alert
           var col = 0
-          alertItem.forEach((al: { alertType: string; checked: boolean }) => {
-            if (al.alertType != "CO2" && al.checked == false) {
+          alertItem.forEach((al: { alertType: string; text: string }) => {
+            if (al.alertType != "CO2" && al.text != "") {
               col++
             }
           })
@@ -134,7 +134,7 @@ export class MapComponent implements OnInit {
           const marker = L.marker([sensors.lat, sensors.lon], { icon: iconColor[col] })
             .bindPopup(`
             <p>Adresse : ${sensors.address}</p>
-            <a href="/details/${sensors.sensorID}">Plus d'information</a>
+            <a routerLink="/details/${sensors.sensorID}" routerLinkActive="active">Plus d'information</a>
             `)
           marker.on('click', () => {
             this.selectedSensor = sensors
@@ -149,8 +149,8 @@ export class MapComponent implements OnInit {
           const marker = L.marker([element.lat, element.lon], { icon: iconColor[0] })
             .bindPopup(`
             <p>Adresse : ${element.address}</p>
-            <a href="/details/${element.sensorID}">Plus d'information</a>
-          `);
+            <a routerLink="/details/${element.sensorID}" routerLinkActive="active">Plus d'information</a>
+            `);
           marker.on('click', () => {
             this.selectedSensor = element
           });
