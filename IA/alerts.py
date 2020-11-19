@@ -7,22 +7,22 @@ class Alerts():
     def __init__(self):
       self.attribut = 'value'
 
-    CO2_Alerte_1 = "Aération nécessaire : attention à la somnolence et au manque d'air."
-    CO2_Alerte_2 = "Aération nécessaire : attention aux maux de tête, à la somnolence, entraîne une mauvaise concentration, une perte d'attention, une augmentation de la fréquence cardiaque et de légères nausées"
-    CO2_Alerte_3 = "Aération vraiment nécessaire, le taux est au dessus de la limite!"
-    CO2_Alerte_4 = "Sortez immédiatement du lieu où vous vous trouvez ! Cela peut entraîner de grave privation d'oxygène entraînant des lésions cérébrales permanentes, le coma, voire la mort"
+    CO2_Alerte_1 = "CO2_Alerte_1"
+    CO2_Alerte_2 = "CO2_Alerte_2"
+    CO2_Alerte_3 = "CO2_Alerte_3"
+    CO2_Alerte_4 = "CO2_Alerte_4"
     
-    Humidite_Alerte_1 = "Il fait trop humide chez vous, achetez un déshumidificateur"
-    Humidite_Alerte_2 = "Il fait trop sec chez vous, essayez d’acheter un humidificateur d’air"
+    Humidite_Alerte_1 = "Humidite_Alerte_1"
+    Humidite_Alerte_2 = "Humidite_Alerte_2"
 
-    PM_Alerte_1 = "Pour les personnes sensibles, envisagez de réduire les efforts prolongés ou intenses"
-    PM_Alerte_2 = "Les personnes souffrant de maladies respiratoires ou cardiaques, les personnes âgées et les enfants doivent limiter les efforts prolongés."
-    PM_Alerte_3 = "Tout le monde devrait limiter les efforts prolongés"
-    PM_Alerte_4 = "Les personnes souffrant de maladies respiratoires ou cardiaques, les personnes âgées et les enfants doivent éviter toute activité; tout le monde devrait éviter un effort prolongé"
-    PM_Alerte_5 = "Tout le monde devrait éviter tout effort.Les personnes souffrant de maladies respiratoires ou cardiaques, les personnes âgées et les enfants encourent un grand risque"
+    PM_Alerte_1 = "PM_Alerte_1"
+    PM_Alerte_2 = "PM_Alerte_2"
+    PM_Alerte_3 = "PM_Alerte_3"
+    PM_Alerte_4 = "PM_Alerte_4"
+    PM_Alerte_5 = "PM_Alerte_5"
 
-    Temperature_Alerte_1 = "Il fait trop chaud : éteignez/baissez votre chauffage ou ouvrez les fenêtres"
-    Temperature_Alerte_2 = "Il fait trop froid : isolez vos murs"
+    Temperature_Alerte_1 = "Temperature_Alerte_1"
+    Temperature_Alerte_2 = "Temperature_Alerte_2"
 
     ###
     #  Function qui va permettre d'ajouter en base de données une ligne d'alerte pour un sensor donné
@@ -38,13 +38,29 @@ class Alerts():
             print("Send notification for Temperature")
         
         dataToInsert = {
-            "alert": {
-                "CO2": co2Alert,
-                "PM25": pm25Alert,
-                "Humidite": humidityAlert,
-                "Temperature": temperatureAlert,
-                "SensorID": sensor["sensorID"][0]
-            }
+            "alert": [
+                {
+                    "alertType":"CO2",
+                    "text": co2Alert,
+                    "checked": False
+                },
+                {
+                    "alertType":"PM25",
+                    "text": pm25Alert,
+                    "checked": False
+                },
+                {
+                    "alertType":"Humidite",
+                    "text": humidityAlert,
+                    "checked": False
+                },
+                {
+                    "alertType":"Temperature",
+                    "text": temperatureAlert,
+                    "checked": False
+                }
+            ],
+            "SensorID": sensor["sensorID"][0]
         }
         
         print("Data to insert : "+json.dumps(dataToInsert))
@@ -55,28 +71,74 @@ class Alerts():
     ###
     def updateAlerts(self, sensor, alertData, co2Alert, pm25Alert, humidityAlert, temperatureAlert):
         hasToUpdate = False
-        if alertData["CO2"] != co2Alert:
-            print("Send notification for CO2")
-            hasToUpdate = True
-        elif alertData["PM25"] != pm25Alert:
-            print("Send notification for PM 2.5")
-            hasToUpdate = True
-        elif alertData["Humidite"] != humidityAlert:
-            print("Send notification for Humidity")
-            hasToUpdate = True
-        elif alertData["Temperature"] != temperatureAlert:
-            print("Send notification for Temperature")
-            hasToUpdate = True
+
+        co2Checked = ""
+        pm25Checked = ""
+        humidityChecked = ""
+        temperatureChecked = ""
+        
+        for element in alertData["alert"]:
+            if element["alertType"] == "CO2":
+                if element["text"] != co2Alert:
+                    print("Send notification for CO2")
+                    co2Checked = False
+                    hasToUpdate = True
+            elif element["alertType"] == "PM25":
+                if element["text"] != pm25Alert:
+                    print("Send notification for PM 2.5")
+                    pm25Checked = False
+                    hasToUpdate = True
+            elif element["alertType"] == "Humidite":
+                if element["text"] != humidityAlert:
+                    print("Send notification for Humidity")
+                    humidityChecked = False
+                    hasToUpdate = True
+            elif element["alertType"] == "Temperature":
+                if element["text"] != temperatureAlert:
+                    print("Send notification for Temperature")
+                    temperatureChecked = False
+                    hasToUpdate = True
+    
+        for element in alertData["alert"]:
+            if element["alertType"] == "CO2":
+                if co2Checked == "":
+                    co2Checked = element["checked"]
+            if element["alertType"] == "PM25":
+                if pm25Checked == "":
+                    pm25Checked = element["checked"]
+            if element["alertType"] == "Humidite":
+                if humidityChecked == "":
+                    humidityChecked = element["checked"]
+            if element["alertType"] == "Temperature":
+                if temperatureChecked == "":
+                    temperatureChecked = element["checked"]
 
         # Si les nouvelles alertes sont différentes des précédentes alors fait un update en base de données
         if hasToUpdate == True:
             dataToUpdate = {
-                "update": {
-                    "CO2": co2Alert,
-                    "PM25": pm25Alert,
-                    "Humidite": humidityAlert,
-                    "Temperature": temperatureAlert
-                }
+                "alert": [
+                    {
+                        "alertType": "CO2",
+                        "text": co2Alert,
+                        "checked": co2Checked
+                    },
+                    {
+                        "alertType": "PM25",
+                        "text": pm25Alert,
+                        "checked": pm25Checked
+                    },
+                    {
+                        "alertType": "Humidite",
+                        "text": humidityAlert,
+                        "checked": humidityChecked
+                    },
+                    {
+                        "alertType": "Temperature",
+                        "text": temperatureAlert,
+                        "checked": temperatureChecked
+                    }
+                ],
+                "SensorID": sensor["sensorID"][0]
             }
             
             print("Data to update : "+str(dataToUpdate))
