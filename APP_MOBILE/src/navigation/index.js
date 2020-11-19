@@ -12,7 +12,6 @@ const Stack = createStackNavigator();
 const MainNavigator = (props) => {
     const [userToken, setUserToken] = useState('init');
     const { token } = props
-    console.log(props)
 
     useEffect(() => {
         async function getToken() {
@@ -21,8 +20,6 @@ const MainNavigator = (props) => {
 
         getToken();
     }, [token]);
-
-    console.log(userToken)
 
     return (
         <NavigationContainer>

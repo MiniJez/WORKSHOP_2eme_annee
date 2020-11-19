@@ -11,7 +11,6 @@ const Login = (props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login } = props
-
     return (
         <View style={styles.container}>
             <Image

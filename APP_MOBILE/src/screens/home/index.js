@@ -6,6 +6,7 @@ import Colors from '../../constants/Colors';
 import Images from '../../constants/Images'
 import { Button } from 'react-native-elements'
 import { logout } from '../../redux/actions/loginActions'
+import { sensor, sensorUpdate } from '../../redux/actions/sensorActions'
 import { connect } from 'react-redux'
 
 let fakeData = [
@@ -24,17 +25,27 @@ let fakeData = [
 
 const Home = (props) => {
 
-    const [fakeDataState, setFakeDataState] = useState(fakeData);
-    const { logout } = props
+    const { logout, sensor, sensorUpdate, alert } = props
+    const [fakeDataState, setFakeDataState] = useState(alert.alert);
+    console.log(alert.alert)
+    useEffect( () => {
+        sensor()
+    }, [])
 
-    const onPress = (alert) => {
+    useEffect( () => {
+        console.log('hey')
+    }, [alert])
+
+
+    const onPress = (check) => {
         fakeDataState.forEach((value, index) => {
-            if (value.type === alert.type) {
+            if (value.alertType === check.alertType) {
                 let obj = [...fakeDataState]
                 obj[index].checked = !obj[index].checked
                 setFakeDataState(obj);
             }
         })
+        sensorUpdate(fakeDataState)
     }
 
     return (
@@ -47,7 +58,7 @@ const Home = (props) => {
             <View style={styles.actionContainer}>
                 <Text style={styles.actionTitle}>Actions requises</Text>
                 <Divider />
-                {fakeDataState.map((value, index) => {
+                {fakeDataState && fakeDataState.map((value, index) => {
                     if (!value.checked) return <ActionCard key={index} alert={value} onPress={onPress} />
                     else return null
                 })}
@@ -55,7 +66,7 @@ const Home = (props) => {
             <View style={styles.actionContainer}>
                 <Text style={styles.actionTitle}>Actions traitées</Text>
                 <Divider />
-                {fakeDataState.map((value, index) => {
+                {fakeDataState && fakeDataState.map((value, index) => {
                     if (value.checked) return <ActionCard key={index} alert={value} onPress={onPress} />
                     else return null
                 })}
@@ -72,12 +83,15 @@ const Home = (props) => {
 
 
 const mapStateToProps = state => ({
-    state,
+    state, 
+    alert: state.sensorReducer
 });
 
 
 const mapDispatchToProps = {
-    logout
+    logout,
+    sensor,
+    sensorUpdate
 }
 
 
